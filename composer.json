@@ -1,0 +1,22 @@
+{
+	"name": "juniwalk/nestor",
+	"license": "MIT",
+
+	"authors": [{
+		"name": "Martin Procházka",
+		"email": "juniwalk@outlook.cz"
+	}],
+
+	"autoload": {
+		"psr-4": {"JuniWalk\\Nestor\\": "src/"}
+	},
+
+	"require": {
+		"php": ">=7.4",
+		"nette/utils": "^3.0"
+	},
+
+    "suggest": {
+        "nette/di": "For integration into Nette project"
+    }
+}
