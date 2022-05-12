@@ -75,10 +75,10 @@ class RecordBuilder
 
 
 	/**
-	 * @param  string  $message
+	 * @param  string|null  $message
 	 * @return static
 	 */
-	public function withMessage(string $message): self
+	public function withMessage(?string $message): self
 	{
 		$this->data['message'] = $message;
 		return $this;
