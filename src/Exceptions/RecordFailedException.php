@@ -18,6 +18,6 @@ final class RecordFailedException extends NestorException
 	 */
 	public static function from(Throwable $e, string $message = null): self
 	{
-		return new static($message, $e->getCode(), $e);
+		return new static($message ?: $e->getMessage(), $e->getCode(), $e);
 	}
 }

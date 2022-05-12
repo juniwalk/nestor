@@ -53,7 +53,7 @@ abstract class Record
 	protected $isFinished = false;
 
 	/**
-	 * @ORM\Column(type="json")
+	 * @ORM\Column(type="json", nullable=true)
 	 * @var string[]
 	 */
 	protected $params;
