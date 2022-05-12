@@ -41,6 +41,6 @@ final class NestorExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('chronicler'))
-			->setFactory(Chronicler::class, $config);
+			->setFactory(Chronicler::class, (array) $config);
 	}
 }
