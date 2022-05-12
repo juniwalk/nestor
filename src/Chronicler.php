@@ -90,7 +90,6 @@ final class Chronicler
 	{
 		return (new RecordBuilder($this))
 			->withMessage($message)
-			->withEvent($event)
-			->withType($type);
+			->withEvent($event);
 	}
 }
