@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor;
 
 use JuniWalk\Nestor\Entity\Record;
+use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 
 final class RecordBuilder
 {
@@ -15,7 +16,7 @@ final class RecordBuilder
 	private $chronicler;
 
 	/** @var string[] */
-	private $data;
+	private $record;
 
 
 	/**
@@ -29,13 +30,21 @@ final class RecordBuilder
 
 	/**
 	 * @return Record
+	 * @throws RecordNotValidException
 	 */
 	public function create(): Record
 	{
-		$entity = $this->chronicler->getEntityName();
-		$record = new $entity($this->data['event'], $this->data['message']);
+		$entityName = $this->chronicler->getEntityName();
+		$record = new $entityName(
+			$this->record['event'],
+			$this->record['message']
+		);
 
-		foreach ($this->data as $key => $value) {
+		foreach ($this->record as $key => $value) {
+			if (!method_exists($record, 'set'.$key)) {
+				throw new RecordNotValidException;
+			}
+
 			$record->{'set'.$key}($value);
 		}
 
@@ -58,7 +67,7 @@ final class RecordBuilder
 	 */
 	public function withType(string $type): self
 	{
-		$this->data['type'] = $type;
+		$this->record['type'] = $type;
 		return $this;
 	}
 
@@ -69,7 +78,7 @@ final class RecordBuilder
 	 */
 	public function withLevel(string $level): self
 	{
-		$this->data['level'] = $level;
+		$this->record['level'] = $level;
 		return $this;
 	}
 
@@ -80,7 +89,7 @@ final class RecordBuilder
 	 */
 	public function withMessage(string $message): self
 	{
-		$this->data['message'] = $message;
+		$this->record['message'] = $message;
 		return $this;
 	}
 
@@ -91,7 +100,18 @@ final class RecordBuilder
 	 */
 	public function withEvent(?string $event): self
 	{
-		$this->data['event'] = $event;
+		$this->record['event'] = $event;
+		return $this;
+	}
+
+
+	/**
+	 * @param  mixed[]  $params
+	 * @return static
+	 */
+	public function withParams(iterable $params): self
+	{
+		$this->record['params'] = $params;
 		return $this;
 	}
 
@@ -103,7 +123,7 @@ final class RecordBuilder
 	 */
 	public function withParam(string $name, $value): self
 	{
-		$this->data['params'][$name] = $value;
+		$this->record['params'][$name] = $value;
 		return $this;
 	}
 }
