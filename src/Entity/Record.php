@@ -20,49 +20,49 @@ abstract class Record
 	 * @ORM\Column(type="string", length=16)
 	 * @var string
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * @ORM\Column(type="string", length=64)
 	 * @var string
 	 */
-	private $event;
+	protected $event;
 
 	/**
 	 * @ORM\Column(type="string", nullable=true)
 	 * @var string|null
 	 */
-	private $message;
+	protected $message;
 
 	/**
 	 * @ORM\Column(type="datetimetz")
 	 * @var DateTime
 	 */
-	private $date;
+	protected $date;
 
 	/**
 	 * @ORM\Column(type="string", length=16)
 	 * @var string
 	 */
-	private $flag = 'secondary';
+	protected $flag = 'secondary';
 
 	/**
 	 * @ORM\Column(type="boolean")
 	 * @var bool
 	 */
-	private $isFinished = false;
+	protected $isFinished = false;
 
 	/**
 	 * @ORM\Column(type="json")
 	 * @var string[]
 	 */
-	private $params;
+	protected $params;
 
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 * @var string|null
 	 */
-	private $note;
+	protected $note;
 
 
 	/**
