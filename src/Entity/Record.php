@@ -5,7 +5,7 @@
  * @license   MIT License
  */
 
-namespace App\Entity;
+namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +14,7 @@ use Nette\Utils\Strings;
 /**
  * @ORM\MappedSuperclass
  */
-class Record
+abstract class Record
 {
 	/**
 	 * @ORM\Column(type="string", length=16)
