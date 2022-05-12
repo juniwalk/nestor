@@ -135,6 +135,23 @@ abstract class Record
 
 
 	/**
+	 * @return string
+	 */
+	public function getMessageFormatted(): string
+	{
+		$replace = [];
+
+		foreach ($this->params as $key => $val) {
+			if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+				$replace['{' . $key . '}'] = $val;
+			}
+		}
+	
+		return strtr($this->message, $replace);
+	}
+
+
+	/**
 	 * @return DateTime
 	 */
 	public function getDate(): DateTime
