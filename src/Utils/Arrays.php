@@ -35,7 +35,7 @@ final class Arrays
 
 	/**
 	 * @param  mixed[]  $items
-	 * @return mixed[]
+	 * @return string[]
 	 */
 	public static function tokenize(iterable $items): iterable
 	{
