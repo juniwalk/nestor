@@ -9,6 +9,7 @@ namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JuniWalk\Nestor\Utils\Arrays;
 use Nette\Utils\Strings;
 
 /**
@@ -139,14 +140,8 @@ abstract class Record
 	 */
 	public function getMessageFormatted(): string
 	{
-		$replace = [];
-
-		foreach ($this->params as $key => $val) {
-			if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
-				$replace['{' . $key . '}'] = $val;
-			}
-		}
-	
+		$replace = Arrays::flatten($this->params);
+		$replace = Arrays::tokenize($replace);
 		return strtr($this->message, $replace);
 	}
 
