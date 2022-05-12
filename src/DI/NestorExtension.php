@@ -8,8 +8,6 @@
 namespace JuniWalk\Nestor\DI;
 
 use JuniWalk\Nestor\Chronicler;
-use JuniWalk\Nestor\Entity\Record;
-use JuniWalk\Nestor\Exceptions\EntityNotValidException;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
@@ -29,16 +27,12 @@ final class NestorExtension extends CompilerExtension
 
 	/**
 	 * @return void
-	 * @throws EntityNotValidException
+	 * @throws RecordNotValidException
 	 */
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
-
-		if (!is_subclass_of($config->entityName, Record::class)) {
-			throw new EntityNotValidException;
-		}
 
 		$builder->addDefinition($this->prefix('chronicler'))
 			->setFactory(Chronicler::class, (array) $config);

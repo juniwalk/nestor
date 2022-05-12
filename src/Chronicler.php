@@ -8,9 +8,12 @@
 namespace JuniWalk\Nestor;
 
 use JuniWalk\Nestor\Entity\Record;
+use JuniWalk\Nestor\Exceptions\RecordFailedException;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
+use Doctrine\ORM\ORMException;
 
-class Chronicler
+final class Chronicler
 {
 	/** @var EntityManager */
 	private $entityManager;
@@ -20,13 +23,18 @@ class Chronicler
 
 
 	/**
-	 * @param string  $entityName
-	 * @param EntityManager  $entityManager
+	 * @param  string  $entityName
+	 * @param  EntityManager  $entityManager
+	 * @throws RecordNotValidException
 	 */
 	public function __construct(
 		string $entityName,
 		EntityManager $entityManager
 	) {
+		if (!is_subclass_of($entityName, Record::class)) {
+			throw new RecordNotValidException;
+		}
+
 		$this->entityManager = $entityManager;
 		$this->entityName = $entityName;
 	}
@@ -44,11 +52,18 @@ class Chronicler
 	/**
 	 * @param  Record  $record
 	 * @return void
+	 * @throws RecordFailedException
 	 */
 	public function record(Record $record): void
 	{
-		// persist
-		// flush
+		try {
+			$this->entityManager->persist($record);
+			$this->entityManager->flush($record);
+
+		} catch (DBALException|ORMException $e) {
+			throw RecordFailedException::from($e);
+		}
+
 	}
 
 

@@ -7,6 +7,6 @@
 
 namespace JuniWalk\Nestor\Exceptions;
 
-final class EntityNotValidException extends NestorException
+final class RecordNotValidException extends NestorException
 {
 }

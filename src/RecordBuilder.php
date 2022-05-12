@@ -9,7 +9,7 @@ namespace JuniWalk\Nestor;
 
 use JuniWalk\Nestor\Entity\Record;
 
-class RecordBuilder
+final class RecordBuilder
 {
 	/** @var Chronicler */
 	private $chronicler;
