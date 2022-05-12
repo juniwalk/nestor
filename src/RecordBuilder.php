@@ -33,7 +33,7 @@ final class RecordBuilder
 	public function create(): Record
 	{
 		$entity = $this->chronicler->getEntityName();
-		$record = new $entity($this->data['level'], $this->data['message']);
+		$record = new $entity($this->data['event'], $this->data['message']);
 
 		foreach ($this->data as $key => $value) {
 			$record->{'set'.$key}($value);
