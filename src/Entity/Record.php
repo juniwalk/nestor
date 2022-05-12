@@ -20,7 +20,7 @@ abstract class Record
 	 * @ORM\Column(type="string", length=16)
 	 * @var string
 	 */
-	protected $type;
+	protected $type = 'log';
 
 	/**
 	 * @ORM\Column(type="string", length=64)
@@ -29,7 +29,7 @@ abstract class Record
 	protected $event;
 
 	/**
-	 * @ORM\Column(type="string", nullable=true)
+	 * @ORM\Column(type="string")
 	 * @var string|null
 	 */
 	protected $message;
@@ -66,16 +66,14 @@ abstract class Record
 
 
 	/**
-	 * @param string  $type
 	 * @param string  $event
-	 * @param string|null  $message
+	 * @param string  $message
 	 */
-	final public function __construct(string $type, string $event, string $message = null)
+	final public function __construct(string $event, string $message)
 	{
 		$this->date = new DateTime;
 		$this->message = $message;
 		$this->event = $event;
-		$this->type = $type;
 	}
 
 
@@ -118,19 +116,19 @@ abstract class Record
 
 
 	/**
-	 * @param  string|null  $message
+	 * @param  string  $message
 	 * @return void
 	 */
-	public function setMessage(?string $message): void
+	public function setMessage(string $message): void
 	{
-		$this->message = $message ?: null;
+		$this->message = $message;
 	}
 
 
 	/**
-	 * @return string|null
+	 * @return string
 	 */
-	public function getMessage(): ?string
+	public function getMessage(): string
 	{
 		return $this->message;
 	}

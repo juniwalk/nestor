@@ -78,17 +78,15 @@ final class Chronicler
 		} catch (DBALException|ORMException $e) {
 			throw RecordFailedException::from($e);
 		}
-
 	}
 
 
 	/**
-	 * @param  string  $type
 	 * @param  string  $event
-	 * @param  string|null  $message
+	 * @param  string  $message
 	 * @return RecordBuilder
 	 */
-	public function createRecord(string $type, string $event, string $message = null): RecordBuilder
+	public function createRecord(string $event, string $message): RecordBuilder
 	{
 		return (new RecordBuilder($this))
 			->withMessage($message)
