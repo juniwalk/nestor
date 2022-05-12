@@ -33,7 +33,7 @@ final class RecordBuilder
 	public function create(): Record
 	{
 		$entity = $this->chronicler->getEntityName();
-		$record = new $entity($this->data['type'], $this->data['event']);
+		$record = new $entity($this->data['level'], $this->data['message']);
 
 		foreach ($this->data as $key => $value) {
 			$record->{'set'.$key}($value);
@@ -64,21 +64,21 @@ final class RecordBuilder
 
 
 	/**
-	 * @param  string  $event
+	 * @param  string  $level
 	 * @return static
 	 */
-	public function withEvent(string $event): self
+	public function withLevel(string $level): self
 	{
-		$this->data['event'] = $event;
+		$this->data['level'] = $level;
 		return $this;
 	}
 
 
 	/**
-	 * @param  string|null  $message
+	 * @param  string  $message
 	 * @return static
 	 */
-	public function withMessage(?string $message): self
+	public function withMessage(string $message): self
 	{
 		$this->data['message'] = $message;
 		return $this;
@@ -86,12 +86,12 @@ final class RecordBuilder
 
 
 	/**
-	 * @param  string  $flag
+	 * @param  string|null  $event
 	 * @return static
 	 */
-	public function withFlag(string $flag): self
+	public function withEvent(?string $event): self
 	{
-		$this->data['flag'] = $flag;
+		$this->data['event'] = $event;
 		return $this;
 	}
 

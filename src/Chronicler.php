@@ -50,6 +50,21 @@ final class Chronicler
 
 
 	/**
+	 * @param  string  $event
+	 * @param  string  $message
+	 * @param  mixed[]  $params
+	 * @return void
+	 */
+	public function log(string $event, string $message, iterable $params = []): void
+	{
+		$log = new $this->entityName('log', $event, $message);
+		$log->setParams($params);
+
+		$this->record($log);
+	}
+
+
+	/**
 	 * @param  Record  $record
 	 * @return void
 	 * @throws RecordFailedException

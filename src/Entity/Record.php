@@ -44,7 +44,7 @@ abstract class Record
 	 * @ORM\Column(type="string", length=16)
 	 * @var string
 	 */
-	protected $flag = 'secondary';
+	protected $level = 'secondary';
 
 	/**
 	 * @ORM\Column(type="boolean")
@@ -68,10 +68,12 @@ abstract class Record
 	/**
 	 * @param string  $type
 	 * @param string  $event
+	 * @param string|null  $message
 	 */
-	final public function __construct(string $type, string $event)
+	final public function __construct(string $type, string $event, string $message = null)
 	{
 		$this->date = new DateTime;
+		$this->message = $message;
 		$this->event = $event;
 		$this->type = $type;
 	}
@@ -144,21 +146,21 @@ abstract class Record
 
 
 	/**
-	 * @param  string  $flag
+	 * @param  string  $level
 	 * @return void
 	 */
-	public function setFlag(string $flag): void
+	public function setLevel(string $level): void
 	{
-		$this->flag = $flag;
+		$this->level = $level;
 	}
 
 
 	/**
 	 * @return string
 	 */
-	public function getFlag(): string
+	public function getLevel(): string
 	{
-		return $this->flag;
+		return $this->level;
 	}
 
 
@@ -187,7 +189,7 @@ abstract class Record
 	 */
 	public function setParams(iterable $params): void
 	{
-		$this->params = $params;
+		$this->params = $params ?: null;
 	}
 
 
