@@ -194,6 +194,15 @@ abstract class Record
 
 
 	/**
+	 * @return bool
+	 */
+	public function isFinishable(): bool
+	{
+		return $this->type == 'todo' && !$this->isFinished;
+	}
+
+
+	/**
 	 * @param  string[]  $params
 	 * @return void
 	 */
