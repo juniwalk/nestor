@@ -222,6 +222,15 @@ abstract class Record
 
 
 	/**
+	 * @return string[]
+	 */
+	public function getParamsUnified(): iterable
+	{
+		return Arrays::flatten($this->params);
+	}
+
+
+	/**
 	 * @param  string|null  $note
 	 * @return void
 	 */
