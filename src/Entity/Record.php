@@ -222,6 +222,16 @@ abstract class Record
 
 
 	/**
+	 * @param  string  $key
+	 * @return mixed|null
+	 */
+	public function getParam(string $key)//: mixed
+	{
+		return $this->params[$key] ?? null;
+	}
+
+
+	/**
 	 * @return string[]
 	 */
 	public function getParamsUnified(): iterable
