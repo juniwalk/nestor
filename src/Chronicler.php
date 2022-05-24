@@ -57,10 +57,25 @@ final class Chronicler
 	 */
 	public function log(string $event, string $message, iterable $params = []): void
 	{
-		$log = new $this->entityName('log', $event, $message);
-		$log->setParams($params);
+		$record = $this->createRecord($event, $message, $params)
+			->withType('log');
 
-		$this->record($log);
+		$this->record($record->create());
+	}
+
+
+	/**
+	 * @param  string  $event
+	 * @param  string  $message
+	 * @param  mixed[]  $params
+	 * @return void
+	 */
+	public function todo(string $event, string $message, iterable $params = []): void
+	{
+		$record = $this->createRecord($event, $message, $params)
+			->withType('todo');
+
+		$this->record($record->create());
 	}
 
 
@@ -84,12 +99,14 @@ final class Chronicler
 	/**
 	 * @param  string  $event
 	 * @param  string  $message
+	 * @param  mixed[]  $params
 	 * @return RecordBuilder
 	 */
-	public function createRecord(string $event, string $message): RecordBuilder
+	public function createRecord(string $event, string $message, iterable $params = []): RecordBuilder
 	{
 		return (new RecordBuilder($this))
 			->withMessage($message)
-			->withEvent($event);
+			->withEvent($event)
+			->withParams($params);
 	}
 }
