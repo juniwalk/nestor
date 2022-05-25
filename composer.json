@@ -13,10 +13,11 @@
 
 	"require": {
 		"php": ">=8.0",
-		"doctrine/orm": "^2.0|^3.0"
+		"doctrine/orm": "^2.0|^3.0",
+		"nette/utils": "^3.0"
 	},
 
-    "suggest": {
-        "nette/di": "For integration into Nette project"
-    }
+	"suggest": {
+		"nette/di": "For integration into Nette project"
+	}
 }

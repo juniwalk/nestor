@@ -9,6 +9,7 @@ namespace JuniWalk\Nestor;
 
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
+use Nette\Utils\Strings;
 
 final class RecordBuilder
 {
@@ -111,6 +112,19 @@ final class RecordBuilder
 	 */
 	public function withParams(iterable $params): self
 	{
+		foreach ($params as $key => $value) {
+			if (!$matches = Strings::match($key, '/record\.(\w+)/i')) {
+				continue;
+			}
+
+			if (!method_exists($this, 'with'.$matches[1])) {
+				continue;
+			}
+
+			$this->{'with'.$matches[1]}($value);
+			unset($params[$key]);
+		}
+
 		$this->record['params'] = $params;
 		return $this;
 	}
