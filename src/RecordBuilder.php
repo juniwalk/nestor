@@ -7,6 +7,7 @@
 
 namespace JuniWalk\Nestor;
 
+use DateTime;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use Nette\Utils\Strings;
