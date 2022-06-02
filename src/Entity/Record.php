@@ -147,6 +147,16 @@ abstract class Record
 
 
 	/**
+	 * @param  DateTime  $date
+	 * @return void
+	 */
+	public function setDate(DateTime $date): void
+	{
+		$this->date = clone $date;
+	}
+
+
+	/**
 	 * @return DateTime
 	 */
 	public function getDate(): DateTime

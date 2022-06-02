@@ -107,6 +107,17 @@ final class RecordBuilder
 
 
 	/**
+	 * @param  DateTime  $date
+	 * @return static
+	 */
+	public function withDate(DateTime $date): self
+	{
+		$this->record['date'] = $date;
+		return $this;
+	}
+
+
+	/**
 	 * @param  mixed[]  $params
 	 * @return static
 	 */
