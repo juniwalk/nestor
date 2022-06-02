@@ -91,7 +91,7 @@ final class Chronicler
 			$this->entityManager->flush($record);
 
 		} catch (DBALException|ORMException $e) {
-			throw RecordFailedException::from($e);
+			throw RecordFailedException::fromRecord($record, $e);
 		}
 	}
 

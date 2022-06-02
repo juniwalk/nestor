@@ -7,17 +7,43 @@
 
 namespace JuniWalk\Nestor\Exceptions;
 
+use JuniWalk\Nestor\Entity\Record;
 use Throwable;
 
 final class RecordFailedException extends NestorException
 {
+	/** @var Record */
+	private $record;
+
+
 	/**
-	 * @param  Throwable  $e
-	 * @param  string|null  $message
+	 * @param  Record  $record
+	 * @param  Throwable  $previous
 	 * @return static
 	 */
-	public static function from(Throwable $e, string $message = null): self
+	public static function fromRecord(Record $record, Throwable $previous): self
 	{
-		return new static($message ?: $e->getMessage(), $e->getCode(), $e);
+		$self = new static($previous->getMessage(), $previous->getCode(), $previous);
+		$self->record = $record;
+
+		return $self;
+	}
+
+
+	/**
+	 * @return Record
+	 */
+	public function getRecord(): Record
+	{
+		return $this->record;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function createLogFromRecord(): string
+	{
+		return (string) $this->record;
 	}
 }

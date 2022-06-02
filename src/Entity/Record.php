@@ -10,7 +10,7 @@ namespace JuniWalk\Nestor\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JuniWalk\Nestor\Utils\Arrays;
-use Nette\Utils\Strings;
+use Nette\Utils\Json;
 
 /**
  * @ORM\MappedSuperclass
@@ -75,6 +75,21 @@ abstract class Record
 		$this->date = new DateTime;
 		$this->message = $message;
 		$this->event = $event;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function __toString(): string
+	{
+		return strtr("[%type%, %level%] %event%: %message% (%params%)", [
+			'%type%' => $this->getType(),
+			'%level%' => $this->getLevel(),
+			'%event%' => $this->getEvent(),
+			'%message%' => $this->getMessageFormatted(),
+			'%params%' => Json::encode($this->getParams()),
+		]);
 	}
 
 
