@@ -233,6 +233,10 @@ abstract class Record
 	 */
 	public function setParams(iterable $params): void
 	{
+		$params = array_filter($params, function($v): bool {
+			return !is_null($v);
+		});
+
 		$this->params = $params ?: null;
 	}
 
