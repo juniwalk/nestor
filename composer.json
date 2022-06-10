@@ -14,7 +14,7 @@
 	"require": {
 		"php": ">=8.0",
 		"doctrine/orm": "^2.0|^3.0",
-		"juniwalk/utils": "^3.0"
+		"juniwalk/utils": "^1.0"
 	},
 
 	"suggest": {
