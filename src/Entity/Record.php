@@ -9,7 +9,7 @@ namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use JuniWalk\Nestor\Utils\Arrays;
+use JuniWalk\Utils\Arrays;
 use Nette\Utils\Json;
 
 /**
