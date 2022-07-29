@@ -15,55 +15,64 @@ use Nette\Utils\Json;
 /**
  * @ORM\MappedSuperclass
  */
+#[ORM\MappedSuperclass]
 abstract class Record
 {
 	/**
 	 * @ORM\Column(type="string", length=16)
 	 * @var string
 	 */
-	protected $type = 'log';
+	#[ORM\Column(type: "string", length: 16)]
+	protected string $type = 'log';
 
 	/**
 	 * @ORM\Column(type="string", length=64)
 	 * @var string
 	 */
-	protected $event;
+	#[ORM\Column(type: "string", length: 64)]
+	protected string $event;
 
 	/**
 	 * @ORM\Column(type="string")
 	 * @var string|null
 	 */
-	protected $message;
+	#[ORM\Column(type: "string")]
+	protected ?string $message;
 
 	/**
 	 * @ORM\Column(type="datetimetz")
 	 * @var DateTime
 	 */
-	protected $date;
+	#[ORM\Column(type: "datetimetz")]
+	protected DateTime $date;
 
 	/**
 	 * @ORM\Column(type="string", length=16)
 	 * @var string
 	 */
-	protected $level = 'secondary';
+	#[ORM\Column(type: "string", length: 16)]
+	protected string $level = 'secondary';
 
 	/**
 	 * @ORM\Column(type="boolean")
 	 * @var bool
 	 */
-	protected $isFinished = false;
+	#[ORM\Column(type: "boolean")]
+	protected bool $isFinished = false;
 
 	/**
 	 * @ORM\Column(type="json", nullable=true)
 	 * @var string[]
 	 */
-	protected $params;
+	#[ORM\Column(type: "json", nullable: true)]
+	protected ?array $params;
 
 	/**
 	 * @ORM\Column(type="text", nullable=true)
 	 * @var string|null
 	 */
-	protected $note;
+	#[ORM\Column(type: "text", nullable: true)]
+	protected ?string $note;
 
 
 	/**
