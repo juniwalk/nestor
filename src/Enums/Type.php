@@ -16,6 +16,21 @@ enum Type: string implements LabelledEnum
 	case Todo = 'todo';
 
 
+	/**
+	 * @return string[]
+	 */
+	public static function getItems(): iterable
+	{
+		$items = [];
+
+		foreach (self::cases() as $case) {
+			$items[$case->value] = $case->label();
+		}
+
+		return $items;
+	}
+
+
 	public function label(): string
 	{
 		return match($this) {
