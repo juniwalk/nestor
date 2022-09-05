@@ -5,7 +5,7 @@
  * @license   MIT License
  */
 
-namespace App\Enums;
+namespace JuniWalk\Nestor\Enums;
 
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Enums\LabelledEnum;
