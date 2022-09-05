@@ -9,29 +9,22 @@ namespace JuniWalk\Nestor;
 
 use DateTime;
 use JuniWalk\Nestor\Entity\Record;
+use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
-use Nette\Utils\Strings;
+use JuniWalk\Utils\Enums\Color;
+use JuniWalk\Utils\Strings;
 
 final class RecordBuilder
 {
-	/** @var Chronicler */
-	private $chronicler;
-
-	/** @var string[] */
-	private $record;
+	private iterable $record = [];
 
 
-	/**
-	 * @param Chronicler  $chronicler
-	 */
-	public function __construct(Chronicler $chronicler)
-	{
-		$this->chronicler = $chronicler;
-	}
+	public function __construct(
+		private readonly Chronicler $chronicler
+	) {}
 
 
 	/**
-	 * @return Record
 	 * @throws RecordNotValidException
 	 */
 	public function create(): Record
@@ -54,75 +47,48 @@ final class RecordBuilder
 	}
 
 
-	/**
-	 * @return void
-	 */
 	public function record(): void
 	{
 		$this->chronicler->record($this->create());
 	}
 
 
-	/**
-	 * @param  string  $type
-	 * @return static
-	 */
-	public function withType(string $type): self
+	public function withType(Type $type): static
 	{
 		$this->record['type'] = $type;
 		return $this;
 	}
 
 
-	/**
-	 * @param  string  $level
-	 * @return static
-	 */
-	public function withLevel(string $level): self
+	public function withLevel(Color $level): static
 	{
 		$this->record['level'] = $level;
 		return $this;
 	}
 
 
-	/**
-	 * @param  string  $message
-	 * @return static
-	 */
-	public function withMessage(string $message): self
+	public function withMessage(string $message): static
 	{
 		$this->record['message'] = $message;
 		return $this;
 	}
 
 
-	/**
-	 * @param  string|null  $event
-	 * @return static
-	 */
-	public function withEvent(?string $event): self
+	public function withEvent(?string $event): static
 	{
 		$this->record['event'] = $event;
 		return $this;
 	}
 
 
-	/**
-	 * @param  DateTime  $date
-	 * @return static
-	 */
-	public function withDate(DateTime $date): self
+	public function withDate(DateTime $date): static
 	{
 		$this->record['date'] = $date;
 		return $this;
 	}
 
 
-	/**
-	 * @param  mixed[]  $params
-	 * @return static
-	 */
-	public function withParams(iterable $params): self
+	public function withParams(iterable $params): static
 	{
 		foreach ($params as $key => $value) {
 			if (!$matches = Strings::match($key, '/record\.(\w+)/i')) {
@@ -142,12 +108,7 @@ final class RecordBuilder
 	}
 
 
-	/**
-	 * @param  string  $name
-	 * @param  mixed  $value
-	 * @return static
-	 */
-	public function withParam(string $name, $value): self
+	public function withParam(string $name, $value): static
 	{
 		$this->record['params'][$name] = $value;
 		return $this;

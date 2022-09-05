@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor;
 
 use JuniWalk\Nestor\Entity\Record;
+use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
@@ -15,73 +16,44 @@ use Doctrine\ORM\ORMException;
 
 final class Chronicler
 {
-	/** @var EntityManager */
-	private $entityManager;
-
-	/** @var string */
-	private $entityName;
-
-
 	/**
-	 * @param  string  $entityName
-	 * @param  EntityManager  $entityManager
 	 * @throws RecordNotValidException
 	 */
 	public function __construct(
-		string $entityName,
-		EntityManager $entityManager
+		private readonly string $entityName,
+		private readonly EntityManager $entityManager,
 	) {
 		if (!is_subclass_of($entityName, Record::class)) {
 			throw new RecordNotValidException;
 		}
-
-		$this->entityManager = $entityManager;
-		$this->entityName = $entityName;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getEntityName(): string
 	{
 		return $this->entityName;
 	}
 
 
-	/**
-	 * @param  string  $event
-	 * @param  string  $message
-	 * @param  mixed[]  $params
-	 * @return void
-	 */
 	public function log(string $event, string $message, iterable $params = []): void
 	{
 		$record = $this->createRecord($event, $message, $params)
-			->withType('log');
+			->withType(Type::Log);
 
 		$this->record($record->create());
 	}
 
 
-	/**
-	 * @param  string  $event
-	 * @param  string  $message
-	 * @param  mixed[]  $params
-	 * @return void
-	 */
 	public function todo(string $event, string $message, iterable $params = []): void
 	{
 		$record = $this->createRecord($event, $message, $params)
-			->withType('todo');
+			->withType(Type::Todo);
 
 		$this->record($record->create());
 	}
 
 
 	/**
-	 * @param  Record  $record
-	 * @return void
 	 * @throws RecordFailedException
 	 */
 	public function record(Record $record): void
@@ -96,12 +68,6 @@ final class Chronicler
 	}
 
 
-	/**
-	 * @param  string  $event
-	 * @param  string  $message
-	 * @param  mixed[]  $params
-	 * @return RecordBuilder
-	 */
 	public function createRecord(string $event, string $message, iterable $params = []): RecordBuilder
 	{
 		return (new RecordBuilder($this))

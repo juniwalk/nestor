@@ -9,76 +9,39 @@ namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Utils\Arrays;
+use JuniWalk\Utils\Enums\Color;
 use Nette\Utils\Json;
 
-/**
- * @ORM\MappedSuperclass
- */
 #[ORM\MappedSuperclass]
 abstract class Record
 {
-	/**
-	 * @ORM\Column(type="string", length=16)
-	 * @var string
-	 */
-	#[ORM\Column(type: "string", length: 16)]
-	protected string $type = 'log';
+	#[ORM\Column(type: 'string', length: 16, enumType: Type::class)]
+	protected Type $type = Type::Log;
 
-	/**
-	 * @ORM\Column(type="string", length=64)
-	 * @var string
-	 */
-	#[ORM\Column(type: "string", length: 64)]
+	#[ORM\Column(type: 'string', length: 64)]
 	protected string $event;
 
-	/**
-	 * @ORM\Column(type="string")
-	 * @var string|null
-	 */
-	#[ORM\Column(type: "string")]
+	#[ORM\Column(type: 'string')]
 	protected ?string $message;
 
-	/**
-	 * @ORM\Column(type="datetimetz")
-	 * @var DateTime
-	 */
-	#[ORM\Column(type: "datetimetz")]
+	#[ORM\Column(type: 'datetimetz')]
 	protected DateTime $date;
 
-	/**
-	 * @ORM\Column(type="string", length=16)
-	 * @var string
-	 */
-	#[ORM\Column(type: "string", length: 16)]
-	protected string $level = 'secondary';
+	#[ORM\Column(type: 'string', length: 16, enumType: Color::class)]
+	protected Color $level = Color::Secondary;
 
-	/**
-	 * @ORM\Column(type="boolean")
-	 * @var bool
-	 */
-	#[ORM\Column(type: "boolean")]
+	#[ORM\Column(type: 'boolean')]
 	protected bool $isFinished = false;
 
-	/**
-	 * @ORM\Column(type="json", nullable=true)
-	 * @var string[]
-	 */
-	#[ORM\Column(type: "json", nullable: true)]
+	#[ORM\Column(type: 'json', nullable: true)]
 	protected ?array $params;
 
-	/**
-	 * @ORM\Column(type="text", nullable=true)
-	 * @var string|null
-	 */
-	#[ORM\Column(type: "text", nullable: true)]
+	#[ORM\Column(type: 'text', nullable: true)]
 	protected ?string $note;
 
 
-	/**
-	 * @param string  $event
-	 * @param string  $message
-	 */
 	final public function __construct(string $event, string $message)
 	{
 		$this->date = new DateTime;
@@ -87,14 +50,11 @@ abstract class Record
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function __toString(): string
 	{
 		return strtr("[%type%, %level%] %event%: %message% (%params%)", [
-			'%type%' => $this->getType(),
-			'%level%' => $this->getLevel(),
+			'%type%' => $this->getType()->value,
+			'%level%' => $this->getLevel()->value,
 			'%event%' => $this->getEvent(),
 			'%message%' => $this->getMessageFormatted(),
 			'%params%' => Json::encode($this->getParams()),
@@ -102,66 +62,42 @@ abstract class Record
 	}
 
 
-	/**
-	 * @param  string  $type
-	 * @return void
-	 */
-	public function setType(string $type): void
+	public function setType(Type $type): void
 	{
 		$this->type = $type;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getType(): string
+	public function getType(): Type
 	{
 		return $this->type;
 	}
 
 
-	/**
-	 * @param  string  $event
-	 * @return void
-	 */
 	public function setEvent(string $event): void
 	{
 		$this->event = $event;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getEvent(): string
 	{
 		return $this->event;
 	}
 
 
-	/**
-	 * @param  string  $message
-	 * @return void
-	 */
 	public function setMessage(string $message): void
 	{
 		$this->message = $message;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getMessage(): string
 	{
 		return $this->message;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getMessageFormatted(): string
 	{
 		$replace = Arrays::flatten($this->params);
@@ -170,76 +106,48 @@ abstract class Record
 	}
 
 
-	/**
-	 * @param  DateTime  $date
-	 * @return void
-	 */
 	public function setDate(DateTime $date): void
 	{
 		$this->date = clone $date;
 	}
 
 
-	/**
-	 * @return DateTime
-	 */
 	public function getDate(): DateTime
 	{
 		return clone $this->date;
 	}
 
 
-	/**
-	 * @param  string  $level
-	 * @return void
-	 */
-	public function setLevel(string $level): void
+	public function setLevel(Color $level): void
 	{
 		$this->level = $level;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getLevel(): string
+	public function getLevel(): Color
 	{
 		return $this->level;
 	}
 
 
-	/**
-	 * @param  bool  $isFinished
-	 * @return void
-	 */
 	public function setFinished(bool $isFinished): void
 	{
 		$this->isFinished = $isFinished;
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isFinished(): bool
 	{
 		return $this->isFinished;
 	}
 
 
-	/**
-	 * @return bool
-	 */
 	public function isFinishable(): bool
 	{
 		return $this->type == 'todo' && !$this->isFinished;
 	}
 
 
-	/**
-	 * @param  string[]  $params
-	 * @return void
-	 */
 	public function setParams(iterable $params): void
 	{
 		$params = array_filter($params, function($v): bool {
@@ -250,47 +158,30 @@ abstract class Record
 	}
 
 
-	/**
-	 * @return string[]
-	 */
 	public function getParams(): iterable
 	{
 		return $this->params ?: [];
 	}
 
 
-	/**
-	 * @param  string  $key
-	 * @return mixed|null
-	 */
 	public function getParam(string $key)//: mixed
 	{
 		return $this->params[$key] ?? null;
 	}
 
 
-	/**
-	 * @return string[]
-	 */
 	public function getParamsUnified(): iterable
 	{
 		return Arrays::flatten($this->params);
 	}
 
 
-	/**
-	 * @param  string|null  $note
-	 * @return void
-	 */
 	public function setNote(?string $note): void
 	{
 		$this->note = $note ?: null;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
 	public function getNote(): ?string
 	{
 		return $this->note;

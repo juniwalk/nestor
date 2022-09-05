@@ -12,16 +12,10 @@ use Throwable;
 
 final class RecordFailedException extends NestorException
 {
-	/** @var Record */
-	private $record;
+	private Record $record;
 
 
-	/**
-	 * @param  Record  $record
-	 * @param  Throwable  $previous
-	 * @return static
-	 */
-	public static function fromRecord(Record $record, Throwable $previous): self
+	public static function fromRecord(Record $record, Throwable $previous): static
 	{
 		$self = new static($previous->getMessage(), $previous->getCode(), $previous);
 		$self->record = $record;
@@ -30,18 +24,12 @@ final class RecordFailedException extends NestorException
 	}
 
 
-	/**
-	 * @return Record
-	 */
 	public function getRecord(): Record
 	{
 		return $this->record;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function createLogFromRecord(): string
 	{
 		return (string) $this->record;

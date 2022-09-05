@@ -12,9 +12,9 @@
 	},
 
 	"require": {
-		"php": ">=8.0",
+		"php": ">=8.1",
 		"doctrine/orm": "^2.0|^3.0",
-		"juniwalk/utils": "^1.0"
+		"juniwalk/utils": ">=1.0.5"
 	},
 
 	"suggest": {

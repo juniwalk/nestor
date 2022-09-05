@@ -14,9 +14,6 @@ use Nette\Schema\Schema;
 
 final class NestorExtension extends CompilerExtension
 {
-	/**
-	 * @return Schema
-	 */
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
@@ -26,7 +23,6 @@ final class NestorExtension extends CompilerExtension
 
 
 	/**
-	 * @return void
 	 * @throws RecordNotValidException
 	 */
 	public function loadConfiguration()
