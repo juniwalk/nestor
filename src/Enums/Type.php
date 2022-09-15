@@ -8,27 +8,15 @@
 namespace JuniWalk\Nestor\Enums;
 
 use JuniWalk\Utils\Enums\Color;
-use JuniWalk\Utils\Enums\LabelledEnum;
+use JuniWalk\Utils\Enums\LabeledEnum;
+use JuniWalk\Utils\Enums\LabeledTrait;
 
-enum Type: string implements LabelledEnum
+enum Type: string implements LabeledEnum
 {
+	use LabeledTrait;
+
 	case Log = 'log';
 	case Todo = 'todo';
-
-
-	/**
-	 * @return string[]
-	 */
-	public static function getItems(): iterable
-	{
-		$items = [];
-
-		foreach (self::cases() as $case) {
-			$items[$case->value] = $case->label();
-		}
-
-		return $items;
-	}
 
 
 	public function label(): string
