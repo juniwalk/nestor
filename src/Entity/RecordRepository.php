@@ -18,7 +18,7 @@ abstract class RecordRepository extends AbstractRepository
 	 * @throws RecordNotValidException
 	 * @throws EntityNotFoundException
 	 */
-	final public function __construct(EntityManager $entityManager)
+	public function __construct(EntityManager $entityManager)
 	{
 		parent::__construct($entityManager);
 
