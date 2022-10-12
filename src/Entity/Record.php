@@ -41,6 +41,9 @@ abstract class Record
 	#[ORM\Column(type: 'text', nullable: true)]
 	protected ?string $note;
 
+	#[ORM\Column(type: 'string', length: 8, nullable: true)]
+	protected ?string $hash;
+
 
 	final public function __construct(string $event, string $message)
 	{
@@ -148,7 +151,7 @@ abstract class Record
 	}
 
 
-	public function setParams(iterable $params): void
+	public function setParams(array $params): void
 	{
 		$params = array_filter($params, function($v): bool {
 			return !is_null($v);
@@ -158,7 +161,7 @@ abstract class Record
 	}
 
 
-	public function getParams(): iterable
+	public function getParams(): array
 	{
 		return $this->params ?: [];
 	}
@@ -170,7 +173,7 @@ abstract class Record
 	}
 
 
-	public function getParamsUnified(): iterable
+	public function getParamsUnified(): array
 	{
 		return Arrays::flatten($this->params);
 	}
@@ -185,5 +188,17 @@ abstract class Record
 	public function getNote(): ?string
 	{
 		return $this->note;
+	}
+
+
+	public function getHash(): ?string
+	{
+		return $this->hash;
+	}
+
+
+	protected function createUniqueHash(): string
+	{
+		return substr(sha1((string) $this), 0, 8);
 	}
 }

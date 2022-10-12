@@ -7,12 +7,15 @@
 
 namespace JuniWalk\Nestor;
 
-use JuniWalk\Nestor\Entity\Record;
-use JuniWalk\Nestor\Enums\Type;
-use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\ORMException;
+use JuniWalk\Nestor\Entity\Record;
+use JuniWalk\Nestor\Entity\RecordRepository;
+use JuniWalk\Nestor\Enums\Type;
+use JuniWalk\Nestor\Exceptions\RecordFailedException;
+use JuniWalk\Nestor\Exceptions\RecordNotValidException;
+use JuniWalk\Utils\Strings;
 
 final class Chronicler
 {
@@ -22,6 +25,7 @@ final class Chronicler
 	public function __construct(
 		private readonly string $entityName,
 		private readonly EntityManager $entityManager,
+		private readonly RecordRepository $recordRepository,
 	) {
 		if (!is_subclass_of($entityName, Record::class)) {
 			throw new RecordNotValidException;
@@ -65,6 +69,31 @@ final class Chronicler
 		} catch (DBALException|ORMException $e) {
 			throw RecordFailedException::fromRecord($record, $e);
 		}
+	}
+
+
+	public function isRecorded(Record $record, string $period = null): bool
+	{
+		if (!$hash = $record->getHash()) {
+			return false;
+		}
+
+		$result = $this->recordRepository->findOneBy(function($qb) use ($hash, $period) {
+			$qb->andWhere('e.hash = :hash')->setParameter('hash', $hash);
+
+			if (is_null($period)) {
+				return $qb;
+			}
+
+			$dateEnd = new DateTime('-'.Strings::trim($period, '+-'));
+			$dateStart = new DateTime;
+
+			$qb->andWhere('e.date BETWEEN :dateStart AND :dateEnd')
+				->setParameter('dateStart', $dateStart->setTime(0, 0, 0))
+				->setParameter('dateEnd', $dateEnd->setTime(23, 59, 59));
+		});
+
+		return $result instanceof Record;
 	}
 
 
