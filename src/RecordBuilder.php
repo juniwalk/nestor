@@ -74,6 +74,13 @@ final class RecordBuilder
 	}
 
 
+	public function withNote(?string $note): static
+	{
+		$this->record['note'] = $note;
+		return $this;
+	}
+
+
 	public function withEvent(?string $event): static
 	{
 		$this->record['event'] = $event;
