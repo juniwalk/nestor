@@ -14,6 +14,7 @@ use Doctrine\ORM\ORMException;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Entity\RecordRepository;
 use JuniWalk\Nestor\Enums\Type;
+use JuniWalk\Nestor\Exceptions\RecordExistsException;
 use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use JuniWalk\Utils\Strings;
@@ -59,10 +60,15 @@ final class Chronicler
 
 
 	/**
+	 * @throws RecordExistsException
 	 * @throws RecordFailedException
 	 */
-	public function record(Record $record): void
+	public function record(Record $record, string $period = null): void
 	{
+		if ($period && $this->isRecorded($record, $period)) {
+			throw RecordExistsException::fromRecord($record, $period);
+		}
+
 		try {
 			$this->entityManager->persist($record);
 			$this->entityManager->flush($record);
