@@ -7,6 +7,7 @@
 
 namespace JuniWalk\Nestor;
 
+use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\ORMException;
