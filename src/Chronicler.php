@@ -63,8 +63,12 @@ final class Chronicler
 	 * @throws RecordExistsException
 	 * @throws RecordFailedException
 	 */
-	public function record(Record $record, string $period = null): void
+	public function record(RecordBuilder|Record $record, string $period = null): void
 	{
+		if ($record instanceof RecordBuilder) {
+			$record = $record->create();
+		}
+
 		if ($period && $this->isRecorded($record, $period)) {
 			throw RecordExistsException::fromRecord($record, $period);
 		}
