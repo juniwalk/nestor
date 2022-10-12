@@ -191,9 +191,9 @@ abstract class Record
 	}
 
 
-	public function getHash(): ?string
+	public function getHash(): string
 	{
-		return $this->hash;
+		return $this->hash ?: $this->createUniqueHash();
 	}
 
 

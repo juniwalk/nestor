@@ -74,12 +74,8 @@ final class Chronicler
 
 	public function isRecorded(Record $record, string $period = null): bool
 	{
-		if (!$hash = $record->getHash()) {
-			return false;
-		}
-
-		$result = $this->recordRepository->findOneBy(function($qb) use ($hash, $period) {
-			$qb->andWhere('e.hash = :hash')->setParameter('hash', $hash);
+		$result = $this->recordRepository->findOneBy(function($qb) use ($record, $period) {
+			$qb->andWhere('e.hash = :hash')->setParameter('hash', $record->getHash());
 
 			if (is_null($period)) {
 				return $qb;
