@@ -95,9 +95,9 @@ final class Chronicler
 			$dateEnd = new DateTime('-'.Strings::trim($period, '+-'));
 			$dateStart = new DateTime;
 
-			$qb->andWhere('e.date BETWEEN :dateStart AND :dateEnd')
-				->setParameter('dateStart', $dateStart->setTime(0, 0, 0))
-				->setParameter('dateEnd', $dateEnd->setTime(23, 59, 59));
+			$qb->andWhere('e.date < :dateStart AND e.date > :dateEnd')
+				->setParameter('dateStart', $dateStart->setTime(23, 59, 59))
+				->setParameter('dateEnd', $dateEnd->setTime(0, 0, 0));
 		});
 
 		return $result instanceof Record;
