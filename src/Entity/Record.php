@@ -42,7 +42,7 @@ abstract class Record
 	protected ?string $note;
 
 	#[ORM\Column(type: 'string', length: 8, nullable: true)]
-	protected ?string $hash;
+	protected ?string $hash = null;
 
 
 	final public function __construct(string $event, string $message)
