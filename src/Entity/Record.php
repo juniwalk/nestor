@@ -147,7 +147,7 @@ abstract class Record
 
 	public function isFinishable(): bool
 	{
-		return $this->type == 'todo' && !$this->isFinished;
+		return $this->type == Type::Todo && !$this->isFinished;
 	}
 
 
