@@ -47,9 +47,9 @@ final class RecordBuilder
 	}
 
 
-	public function record(): void
+	public function record(string $period = null): void
 	{
-		$this->chronicler->record($this->create());
+		$this->chronicler->record($this->create(), $period);
 	}
 
 
