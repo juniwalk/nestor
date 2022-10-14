@@ -46,7 +46,7 @@ final class Chronicler
 		$record = $this->createRecord($event, $message, $params)
 			->withType(Type::Log);
 
-		$this->record($record->create());
+		$this->record($record);
 	}
 
 
@@ -55,7 +55,7 @@ final class Chronicler
 		$record = $this->createRecord($event, $message, $params)
 			->withType(Type::Todo);
 
-		$this->record($record->create());
+		$this->record($record);
 	}
 
 

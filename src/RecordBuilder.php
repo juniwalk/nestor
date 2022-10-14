@@ -49,7 +49,7 @@ final class RecordBuilder
 
 	public function record(string $period = null): void
 	{
-		$this->chronicler->record($this->create(), $period);
+		$this->chronicler->record($this, $period);
 	}
 
 
