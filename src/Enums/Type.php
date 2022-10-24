@@ -9,11 +9,11 @@ namespace JuniWalk\Nestor\Enums;
 
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Enums\LabeledEnum;
-use JuniWalk\Utils\Enums\LabeledTrait;
+use JuniWalk\Utils\Enums\Traits\Labeled;
 
 enum Type: string implements LabeledEnum
 {
-	use LabeledTrait;
+	use Labeled;
 
 	case Log = 'log';
 	case Todo = 'todo';
