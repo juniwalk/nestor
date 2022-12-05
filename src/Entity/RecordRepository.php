@@ -8,9 +8,9 @@
 namespace JuniWalk\Nestor\Entity;
 
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
+use JuniWalk\ORM\AbstractRepository;
+use JuniWalk\ORM\Exceptions\EntityNotFoundException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
-use JuniWalk\Utils\Exceptions\EntityNotFoundException;
-use JuniWalk\Utils\ORM\AbstractRepository;
 
 abstract class RecordRepository extends AbstractRepository
 {
