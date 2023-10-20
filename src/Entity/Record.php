@@ -103,7 +103,7 @@ abstract class Record
 
 	public function getMessageFormatted(): string
 	{
-		$replace = Arrays::flatten($this->params);
+		$replace = Arrays::flatten($this->getParams());
 		$replace = Arrays::tokenize($replace);
 		return strtr($this->message, $replace);
 	}
@@ -175,7 +175,7 @@ abstract class Record
 
 	public function getParamsUnified(): array
 	{
-		return Arrays::flatten($this->params);
+		return Arrays::flatten($this->getParams());
 	}
 
 
