@@ -25,13 +25,13 @@ abstract class Record
 	protected string $event;
 
 	#[ORM\Column(type: 'string')]
-	protected ?string $message;
+	protected string $message;
 
-	#[ORM\Column(type: 'string', length: 32, nullable: true)]
-	protected string $target;
+	#[ORM\Column(type: 'string', length: 32, nullable: true, options: ['default' => null])]
+	protected ?string $target = null;
 
-	#[ORM\Column(type: 'integer', nullable: true)]
-	protected ?int $targetId;
+	#[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
+	protected ?int $targetId = null;
 
 	#[ORM\Column(type: 'datetimetz')]
 	protected DateTime $date;
@@ -43,10 +43,10 @@ abstract class Record
 	protected bool $isFinished = false;
 
 	#[ORM\Column(type: 'json', nullable: true)]
-	protected ?array $params;
+	protected ?array $params = null;
 
 	#[ORM\Column(type: 'text', nullable: true)]
-	protected ?string $note;
+	protected ?string $note = null;
 
 	#[ORM\Column(type: 'string', length: 8, nullable: true)]
 	protected ?string $hash = null;
@@ -125,7 +125,7 @@ abstract class Record
 	}
 
 
-	public function getTarget(): string
+	public function getTarget(): ?string
 	{
 		return $this->target;
 	}
