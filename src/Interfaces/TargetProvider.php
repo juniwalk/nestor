@@ -9,5 +9,5 @@ namespace JuniWalk\Nestor\Interfaces;
 
 interface TargetProvider
 {
-	public function getRecordTarget(): ?object
+	public function getRecordTarget(): ?object;
 }
