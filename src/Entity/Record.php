@@ -121,7 +121,7 @@ abstract class Record
 	public function setTarget(object $target, ?int $targetId = null): void
 	{
 		$this->targetId = $target->getId() ?? $targetId;
-		$this->target = Format::className($target);
+		$this->target = $target::class;
 	}
 
 
