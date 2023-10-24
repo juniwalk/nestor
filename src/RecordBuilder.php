@@ -16,8 +16,7 @@ use JuniWalk\Utils\Strings;
 
 final class RecordBuilder
 {
-	private iterable $record = [];
-
+	private array $record = [];
 
 	public function __construct(
 		private readonly Chronicler $chronicler
@@ -95,7 +94,7 @@ final class RecordBuilder
 	}
 
 
-	public function withParams(iterable $params): static
+	public function withParams(array $params): static
 	{
 		foreach ($params as $key => $value) {
 			if (!$matches = Strings::match($key, '/record\.(\w+)/i')) {
@@ -115,7 +114,7 @@ final class RecordBuilder
 	}
 
 
-	public function withParam(string $name, $value): static
+	public function withParam(string $name, mixed $value): static
 	{
 		$this->record['params'][$name] = $value;
 		return $this;

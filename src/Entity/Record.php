@@ -12,7 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
-use Nette\Utils\Json;
+use JuniWalk\Utils\Format;
+use JuniWalk\Utils\Json;
 
 #[ORM\MappedSuperclass]
 abstract class Record
@@ -25,6 +26,12 @@ abstract class Record
 
 	#[ORM\Column(type: 'string')]
 	protected ?string $message;
+
+	#[ORM\Column(type: 'string', length: 32, nullable: true)]
+	protected string $target;
+
+	#[ORM\Column(type: 'integer', nullable: true)]
+	protected ?int $targetId;
 
 	#[ORM\Column(type: 'datetimetz')]
 	protected DateTime $date;
@@ -55,7 +62,9 @@ abstract class Record
 
 	public function __toString(): string
 	{
-		return strtr("[%type%, %level%] %event%: %message% (%params%)", [
+		return strtr("[%type%, %level%] %target%(%targetId%) %event%: %message% (%params%)", [
+			'%target%' => $this->getTarget(),
+			'%targetId%' => $this->getTargetId(),
 			'%type%' => $this->getType()->value,
 			'%level%' => $this->getLevel()->value,
 			'%event%' => $this->getEvent(),
@@ -109,6 +118,25 @@ abstract class Record
 	}
 
 
+	public function setTarget(object $target, ?int $targetId = null): void
+	{
+		$this->targetId = $target->getId() ?? $targetId;
+		$this->target = Format::className($target);
+	}
+
+
+	public function getTarget(): string
+	{
+		return $this->target;
+	}
+
+
+	public function getTargetId(): ?int
+	{
+		return $this->targetId;
+	}
+
+
 	public function setDate(DateTime $date): void
 	{
 		$this->date = clone $date;
@@ -153,9 +181,16 @@ abstract class Record
 
 	public function setParams(array $params): void
 	{
-		$params = array_filter($params, function($v): bool {
-			return !is_null($v);
-		});
+		$this->params = null;
+		$this->addParams($params);
+	}
+
+
+	public function addParams(array $params): void
+	{
+		$params = Arrays::map($params, fn($v) => Format::scalarize($v));
+		$params = array_filter($params, fn($v) => !is_null($v));
+		$params = array_merge($params, $this->params ?? []);
 
 		$this->params = $params ?: null;
 	}
@@ -167,7 +202,7 @@ abstract class Record
 	}
 
 
-	public function getParam(string $key)//: mixed
+	public function getParam(string $key): mixed
 	{
 		return $this->params[$key] ?? null;
 	}
