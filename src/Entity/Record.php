@@ -27,7 +27,7 @@ abstract class Record
 	#[ORM\Column(type: 'string')]
 	protected string $message;
 
-	#[ORM\Column(type: 'string', length: 32, nullable: true, options: ['default' => null])]
+	#[ORM\Column(type: 'string', nullable: true, options: ['default' => null])]
 	protected ?string $target = null;
 
 	#[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
