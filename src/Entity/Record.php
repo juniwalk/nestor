@@ -9,6 +9,7 @@ namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
@@ -122,6 +123,10 @@ abstract class Record
 	{
 		$this->targetId = $target->getId() ?? $targetId;
 		$this->target = $target::class;
+
+		if ($target instanceof Proxy) {
+			$this->target = get_parent_class($target);
+		}
 	}
 
 
