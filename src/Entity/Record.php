@@ -11,6 +11,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
+use JuniWalk\ORM\Traits as Tools;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
