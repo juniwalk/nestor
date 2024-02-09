@@ -259,7 +259,7 @@ abstract class Record
 	}
 
 
-	abstract public function createLink(Control $control): ?string
+	abstract public function createLink(Control $control): ?string;
 
 
 	protected function createUniqueHash(): string
