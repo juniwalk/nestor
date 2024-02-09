@@ -217,7 +217,7 @@ abstract class Record
 		$params = array_filter($params, fn($v) => !is_null($v));
 		$params = array_merge($params, $this->params ?? []);
 
-		$this->params = $params ?: null;
+		$this->params = $params;
 	}
 
 
