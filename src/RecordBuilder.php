@@ -13,13 +13,14 @@ use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Strings;
+use Nette\Security\IIdentity as Identity;
 
 final class RecordBuilder
 {
 	private array $record = [];
 
 	public function __construct(
-		private readonly Chronicler $chronicler
+		private readonly Chronicler $chronicler,
 	) {}
 
 
@@ -31,7 +32,7 @@ final class RecordBuilder
 		$entityName = $this->chronicler->getEntityName();
 		$record = new $entityName(
 			$this->record['event'],
-			$this->record['message']
+			$this->record['message'],
 		);
 
 		foreach ($this->record as $key => $value) {
@@ -91,6 +92,19 @@ final class RecordBuilder
 	{
 		$this->record['date'] = $date;
 		return $this;
+	}
+
+
+	public function withOwner(Identity $owner): static
+	{
+		$this->record['owner'] = $owner;
+		return $this;
+	}
+
+
+	public function withAuthor(Identity $owner): static
+	{
+		return $this->withOwner($owner);
 	}
 
 

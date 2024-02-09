@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\Nestor\Enums\Type;
@@ -15,42 +16,47 @@ use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Json;
+use Nette\Application\UI\Control;
+use Nette\Localization\Translator;
 
 #[ORM\MappedSuperclass]
 abstract class Record
 {
+	use Tools\Identifier;
+	use Tools\Ownership;
+
 	#[ORM\Column(type: 'string', length: 16, enumType: Type::class)]
-	protected Type $type = Type::Log;
+	private Type $type = Type::Log;
 
 	#[ORM\Column(type: 'string', length: 64)]
-	protected string $event;
+	private string $event;
 
 	#[ORM\Column(type: 'string')]
-	protected string $message;
+	private string $message;
 
 	#[ORM\Column(type: 'string', nullable: true, options: ['default' => null])]
-	protected ?string $target = null;
+	private ?string $target = null;
 
 	#[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
-	protected ?int $targetId = null;
+	private ?int $targetId = null;
 
 	#[ORM\Column(type: 'datetimetz')]
-	protected DateTime $date;
+	private DateTime $date;
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Color::class)]
-	protected Color $level = Color::Secondary;
+	private Color $level = Color::Secondary;
 
 	#[ORM\Column(type: 'boolean')]
-	protected bool $isFinished = false;
+	private bool $isFinished = false;
 
 	#[ORM\Column(type: 'json', nullable: true)]
-	protected ?array $params = null;
+	private ?array $params = null;
 
 	#[ORM\Column(type: 'text', nullable: true)]
-	protected ?string $note = null;
+	private ?string $note = null;
 
 	#[ORM\Column(type: 'string', length: 8, nullable: true)]
-	protected ?string $hash = null;
+	private ?string $hash = null;
 
 
 	final public function __construct(string $event, string $message)
@@ -119,10 +125,20 @@ abstract class Record
 	}
 
 
+	public function getMessageTranslated(Translator $translator): string
+	{
+		return $translator->translate($this->message, Arrays::flatten($this->params));
+	}
+
+
 	public function setTarget(object $target, ?int $targetId = null): void
 	{
-		$this->targetId = $target->getId() ?? $targetId;
+		if (method_exists($target, 'getId')) {
+			$targetId ??= $target->getId();
+		}
+
 		$this->target = $target::class;
+		$this->targetId = $targetId;
 
 		if ($target instanceof Proxy) {
 			$this->target = get_parent_class($target);
@@ -139,6 +155,12 @@ abstract class Record
 	public function getTargetId(): ?int
 	{
 		return $this->targetId;
+	}
+
+
+	public function createTarget(EntityManager $entityManager): Proxy
+	{
+		return $entityManager->getReference($this->target, $this->targetId);
 	}
 
 
@@ -237,8 +259,18 @@ abstract class Record
 	}
 
 
+	abstract public function createLink(Control $control): ?string
+
+
 	protected function createUniqueHash(): string
 	{
-		return substr(sha1((string) $this), 0, 8);
+		return $this->hash ??= substr(sha1((string) $this), 0, 8);
+	}
+
+
+	#[ORM\PreFlush]
+	public function onPreFlush(PreFlushEventArgs $event): void
+	{
+		$this->createUniqueHash();
 	}
 }

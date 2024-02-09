@@ -104,7 +104,7 @@ final class Chronicler
 	}
 
 
-	public function createRecord(string $event, string $message, iterable $params = []): RecordBuilder
+	public function createRecord(string $event, string $message, array $params = []): RecordBuilder
 	{
 		return (new RecordBuilder($this))
 			->withMessage($message)

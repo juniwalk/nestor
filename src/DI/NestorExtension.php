@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor\DI;
 
 use JuniWalk\Nestor\Chronicler;
+use JuniWalk\Nestor\Entity\Subscribers\ActivitySubscriber;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
@@ -18,6 +19,7 @@ final class NestorExtension extends CompilerExtension
 	{
 		return Expect::structure([
 			'entityName' => Expect::string()->required(),
+			'watchActivity' => Expect::bool(false),
 		]);
 	}
 
@@ -31,6 +33,13 @@ final class NestorExtension extends CompilerExtension
 		$config = $this->getConfig();
 
 		$builder->addDefinition($this->prefix('chronicler'))
-			->setFactory(Chronicler::class, (array) $config);
+			->setFactory(Chronicler::class, [$config->entityName]);
+
+		if (!$config->watchActivity) {
+			return;
+		}
+
+		$builder->addDefinition($this->prefix('activitySubscriber'))
+			->setFactory(ActivitySubscriber::class);
 	}
 }
