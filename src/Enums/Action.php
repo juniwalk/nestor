@@ -30,7 +30,7 @@ enum Action: string
 
 	public function color(): Color
 	{
-		return match($action) {
+		return match($this) {
 			self::Create => Color::Success,
 			self::Update => Color::Primary,
 			self::Delete => Color::Danger,
