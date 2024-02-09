@@ -25,6 +25,7 @@ abstract class Record
 {
 	use Tools\Identifier;
 	use Tools\Ownership;
+	use Tools\Parametrized;
 	use Tools\Hashable;
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Type::class)]
@@ -50,9 +51,6 @@ abstract class Record
 
 	#[ORM\Column(type: 'boolean')]
 	protected bool $isFinished = false;
-
-	#[ORM\Column(type: 'json', nullable: true)]
-	protected ?array $params = null;
 
 	#[ORM\Column(type: 'text', nullable: true)]
 	protected ?string $note = null;
@@ -219,18 +217,6 @@ abstract class Record
 		$params = array_merge($params, $this->params ?? []);
 
 		$this->params = $params ?: null;
-	}
-
-
-	public function getParams(): array
-	{
-		return $this->params ?: [];
-	}
-
-
-	public function getParam(string $key): mixed
-	{
-		return $this->params[$key] ?? null;
 	}
 
 
