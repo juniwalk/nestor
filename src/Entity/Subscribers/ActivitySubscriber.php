@@ -94,7 +94,7 @@ class ActivitySubscriber implements EventSubscriber
 				$params = array_merge($params, $target->getRecordParams($action));
 			}
 
-			$record = $this->chronicler->createRecord($action, $message)->create();
+			$record = $this->chronicler->createRecord($action->value, $message)->create();
 			$record->setTarget($target, $targetId);
 			$record->setLevel($action->color());
 			$record->setOwner($this->user);
