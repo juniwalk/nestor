@@ -25,39 +25,37 @@ abstract class Record
 {
 	use Tools\Identifier;
 	use Tools\Ownership;
+	use Tools\Hashable;
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Type::class)]
-	private Type $type = Type::Log;
+	protected Type $type = Type::Log;
 
 	#[ORM\Column(type: 'string', length: 64)]
-	private string $event;
+	protected string $event;
 
 	#[ORM\Column(type: 'string')]
-	private string $message;
+	protected string $message;
 
 	#[ORM\Column(type: 'string', nullable: true, options: ['default' => null])]
-	private ?string $target = null;
+	protected ?string $target = null;
 
 	#[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
-	private ?int $targetId = null;
+	protected ?int $targetId = null;
 
 	#[ORM\Column(type: 'datetimetz')]
-	private DateTime $date;
+	protected DateTime $date;
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Color::class)]
-	private Color $level = Color::Secondary;
+	protected Color $level = Color::Secondary;
 
 	#[ORM\Column(type: 'boolean')]
-	private bool $isFinished = false;
+	protected bool $isFinished = false;
 
 	#[ORM\Column(type: 'json', nullable: true)]
-	private ?array $params = null;
+	protected ?array $params = null;
 
 	#[ORM\Column(type: 'text', nullable: true)]
-	private ?string $note = null;
-
-	#[ORM\Column(type: 'string', length: 8, nullable: true)]
-	private ?string $hash = null;
+	protected ?string $note = null;
 
 
 	final public function __construct(string $event, string $message)
@@ -254,24 +252,12 @@ abstract class Record
 	}
 
 
-	public function getHash(): string
-	{
-		return $this->hash ?: $this->createUniqueHash();
-	}
-
-
 	abstract public function createLink(Control $control): ?string;
-
-
-	protected function createUniqueHash(): string
-	{
-		return $this->hash ??= substr(sha1((string) $this), 0, 8);
-	}
 
 
 	#[ORM\PreFlush]
 	public function onPreFlush(PreFlushEventArgs $event): void
 	{
-		$this->createUniqueHash();
+		$this->hash ??= $this->getHash();
 	}
 }
