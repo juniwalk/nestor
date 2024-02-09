@@ -9,6 +9,7 @@ namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\ORM\Traits as Tools;
