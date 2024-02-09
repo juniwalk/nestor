@@ -206,7 +206,7 @@ abstract class Record
 
 	public function setParams(array $params): void
 	{
-		$this->params = null;
+		$this->params = [];
 		$this->addParams($params);
 	}
 
