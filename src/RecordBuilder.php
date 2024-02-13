@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Nestor;
 
-use DateTime;
+use DateTimeInterface;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
@@ -88,7 +88,7 @@ final class RecordBuilder
 	}
 
 
-	public function withDate(DateTime $date): static
+	public function withDate(DateTimeInterface $date): static
 	{
 		$this->record['date'] = $date;
 		return $this;
