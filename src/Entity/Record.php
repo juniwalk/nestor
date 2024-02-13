@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\ORM\Traits as Tools;
 use JuniWalk\Nestor\Enums\Type;
+use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Format;
@@ -138,6 +139,11 @@ abstract class Record
 
 		$this->target = $target::class;
 		$this->targetId = $targetId;
+
+		// ? Could colide agains withParams method
+		// if ($target instanceof ParamsProvider) {
+		// 	$this->params = $target->getRecordParams();
+		// }
 
 		if ($target instanceof Proxy) {
 			$this->target = get_parent_class($target);

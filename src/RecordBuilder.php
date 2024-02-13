@@ -11,9 +11,11 @@ use DateTimeInterface;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
+use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Strings;
 use Nette\Security\IIdentity as Identity;
+use Throwable;
 
 final class RecordBuilder
 {
@@ -77,6 +79,17 @@ final class RecordBuilder
 	public function withNote(?string $note): static
 	{
 		$this->record['note'] = $note;
+		return $this;
+	}
+
+
+	public function withError(?Throwable $e): static
+	{
+		if (!$e instanceof Throwable) {
+			return $this;
+		}
+
+		$this->record['note'] = Format::className($e).': '.$e->getMessage();
 		return $this;
 	}
 
