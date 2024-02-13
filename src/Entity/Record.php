@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,7 +46,7 @@ abstract class Record
 	protected ?int $targetId = null;
 
 	#[ORM\Column(type: 'datetimetz')]
-	protected DateTime $date;
+	protected DateTimeInterface $date;
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Color::class)]
 	protected Color $level = Color::Secondary;
@@ -162,13 +163,13 @@ abstract class Record
 	}
 
 
-	public function setDate(DateTime $date): void
+	public function setDate(DateTimeInterface $date): void
 	{
 		$this->date = clone $date;
 	}
 
 
-	public function getDate(): DateTime
+	public function getDate(): DateTimeInterface
 	{
 		return clone $this->date;
 	}
