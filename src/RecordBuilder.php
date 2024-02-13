@@ -115,7 +115,7 @@ final class RecordBuilder
 	}
 
 
-	public function withOwner(Identity $owner): static
+	public function withOwner(?Identity $owner): static
 	{
 		$this->record['owner'] = $owner;
 		return $this;
