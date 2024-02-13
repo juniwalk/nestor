@@ -88,6 +88,13 @@ final class RecordBuilder
 	}
 
 
+	public function withTarget(object $target): static
+	{
+		$this->record['target'] = $target;
+		return $this;
+	}
+
+
 	public function withDate(DateTimeInterface $date): static
 	{
 		$this->record['date'] = $date;
