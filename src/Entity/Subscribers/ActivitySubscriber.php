@@ -88,6 +88,8 @@ class ActivitySubscriber implements EventSubscriber
 		$this->isFlushing = true;
 
 		foreach ($this->items as [$target, $action, $params, $targetId]) {
+			// TODO: Add configuration into extension with message format so there is
+			// TODO: no application specific translation string available in this scope
 			$message = 'web.activity.'.Format::className($target).'-'.$action->value;
 
 			if ($target instanceof ParamsProvider) {
@@ -99,6 +101,7 @@ class ActivitySubscriber implements EventSubscriber
 			$record->setLevel($action->color());
 			$record->setOwner($this->user);
 			$record->setParams($params);
+			$record->setFinished(true);
 
 			if ($target instanceof TargetProvider) {
 				$record->setTarget($target->getRecordTarget());
