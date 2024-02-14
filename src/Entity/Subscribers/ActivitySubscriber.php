@@ -27,6 +27,8 @@ use ReflectionClass;
 
 class ActivitySubscriber implements EventSubscriber
 {
+	private static array $ignored = [];
+
 	private bool $isFlushing = false;
 	private array $items = [];
 	private ?Identity $user;
@@ -37,6 +39,12 @@ class ActivitySubscriber implements EventSubscriber
 		private readonly EntityManager $entityManager,
 	) {
 		$this->user = $loggedInUser->getIdentity();
+	}
+
+
+	public static function setIgnored(object $target, bool $ignore = true): void
+	{
+		self::$ignored[spl_object_hash($target)] = $ignore;
 	}
 
 
@@ -85,6 +93,7 @@ class ActivitySubscriber implements EventSubscriber
 			return;
 		}
 
+		$this->items = array_diff_key($this->items, array_filter(self::$ignored));
 		$this->isFlushing = true;
 
 		foreach ($this->items as [$target, $action, $params, $targetId]) {
@@ -112,13 +121,14 @@ class ActivitySubscriber implements EventSubscriber
 
 		$this->entityManager->flush();
 		$this->isFlushing = false;
-		$this->items = [];
+		$this->items = self::$ignored = [];
 	}
 
 
 	private function process(Action $action, object $target): void
 	{
 		$changes = $this->findChanges($action, $target);
+		$hash = spl_object_hash($target);
 
 		if ($target instanceof Collection) {
 			$target = $target->getOwner();
@@ -134,7 +144,7 @@ class ActivitySubscriber implements EventSubscriber
 			return;
 		}
 
-		$this->items[spl_object_id($target)] = [
+		$this->items[$hash] = [
 			$target,
 			$action,
 			$changes,
