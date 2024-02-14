@@ -128,6 +128,13 @@ final class RecordBuilder
 	}
 
 
+	public function withFinished(bool $isFinished): static
+	{
+		$this->record['finished'] = $isFinished;
+		return $this;
+	}
+
+
 	public function withParams(array $params): static
 	{
 		foreach ($params as $key => $value) {
