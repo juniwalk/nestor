@@ -29,6 +29,7 @@ abstract class Record
 	use Tools\Identifier;
 	use Tools\Ownership;
 	use Tools\Parametrized;
+	use Tools\Finishable;
 	use Tools\Hashable;
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Type::class)]
@@ -51,9 +52,6 @@ abstract class Record
 
 	#[ORM\Column(type: 'string', length: 16, enumType: Color::class)]
 	protected Color $level = Color::Secondary;
-
-	#[ORM\Column(type: 'boolean')]
-	protected bool $isFinished = false;
 
 	#[ORM\Column(type: 'text', nullable: true)]
 	protected ?string $note = null;
@@ -190,18 +188,6 @@ abstract class Record
 	public function getLevel(): Color
 	{
 		return $this->level;
-	}
-
-
-	public function setFinished(bool $isFinished): void
-	{
-		$this->isFinished = $isFinished;
-	}
-
-
-	public function isFinished(): bool
-	{
-		return $this->isFinished;
 	}
 
 
