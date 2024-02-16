@@ -91,6 +91,7 @@ final class RecordBuilder
 
 		$className = Format::className($exception);
 		$className = Format::camelCase($className);
+		$className = ucfirst($className);
 
 		$this->record['note'] = $className.': '.$exception->getMessage();
 		return $this;
