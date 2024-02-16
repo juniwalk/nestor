@@ -161,7 +161,7 @@ abstract class Record
 	}
 
 
-	public function createTarget(EntityManager $entityManager): Proxy
+	public function createTarget(EntityManager $entityManager): object
 	{
 		return $entityManager->getReference($this->target, $this->targetId);
 	}
