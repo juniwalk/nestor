@@ -83,13 +83,16 @@ final class RecordBuilder
 	}
 
 
-	public function withError(?Throwable $e): static
+	public function withError(?Throwable $exception): static
 	{
-		if (!$e instanceof Throwable) {
+		if (!$exception instanceof Throwable) {
 			return $this;
 		}
 
-		$this->record['note'] = Format::className($e).': '.$e->getMessage();
+		$className = Format::className($exception);
+		$className = Format::camelCase($className);
+
+		$this->record['note'] = $className.': '.$exception->getMessage();
 		return $this;
 	}
 
