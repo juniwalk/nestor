@@ -27,7 +27,7 @@ use Nette\Localization\Translator;
 abstract class Record
 {
 	use Tools\Identifier;
-	use Tools\Ownership;
+	use Tools\Ownerable;
 	use Tools\Parametrized;
 	use Tools\Finishable;
 	use Tools\Hashable;
