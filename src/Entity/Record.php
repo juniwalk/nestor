@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
-use JuniWalk\ORM\Traits as Tools;
+use JuniWalk\ORM\Entity\Traits as Tools;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Utils\Arrays;
