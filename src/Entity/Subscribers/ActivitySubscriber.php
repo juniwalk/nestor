@@ -17,6 +17,7 @@ use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\Nestor\Chronicler;
 use JuniWalk\Nestor\Entity\Attributes\ActivityOverride;
 use JuniWalk\Nestor\Entity\Attributes\TargetIgnore;
+use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Action;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Nestor\Interfaces\TargetProvider;
@@ -140,7 +141,7 @@ class ActivitySubscriber implements EventSubscriber
 			return;
 		}
 
-		if (!$changes || $target instanceof Activity) {
+		if (!$changes || $target instanceof Record) {
 			return;
 		}
 
