@@ -11,6 +11,8 @@ use DateTimeInterface;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
+use JuniWalk\Nestor\Interfaces\ParamsProvider;
+use JuniWalk\Nestor\Interfaces\TargetRelatedProvider;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Strings;
@@ -108,6 +110,14 @@ final class RecordBuilder
 
 	public function withTarget(object $target): static
 	{
+		if ($target instanceof ParamsProvider) {
+			$this->withParams($target->getRecordParams());
+		}
+
+		if ($target instanceof TargetProvider) {
+			$target = $target->getRecordTarget();
+		}
+
 		$this->record['target'] = $target;
 		return $this;
 	}
@@ -155,7 +165,8 @@ final class RecordBuilder
 			unset($params[$key]);
 		}
 
-		$this->record['params'] = $params;
+		$this->record['params'] ??= [];
+		$this->record['params'] += $params;
 		return $this;
 	}
 
@@ -163,6 +174,13 @@ final class RecordBuilder
 	public function withParam(string $name, mixed $value): static
 	{
 		$this->record['params'][$name] = $value;
+		return $this;
+	}
+
+
+	public function clearParams(): static
+	{
+		unset($this->record['params']);
 		return $this;
 	}
 }
