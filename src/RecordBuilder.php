@@ -83,7 +83,7 @@ final class RecordBuilder
 	}
 
 
-	public function withError(?Throwable $exception): static
+	public function withError(?Throwable $exception, bool $isFinished = false): static
 	{
 		if (!$exception instanceof Throwable) {
 			return $this;
@@ -94,6 +94,7 @@ final class RecordBuilder
 		$className = ucfirst($className);
 
 		$this->record['note'] = $className.': '.$exception->getMessage();
+		$this->record['finished'] ??= $isFinished;
 		return $this;
 	}
 
