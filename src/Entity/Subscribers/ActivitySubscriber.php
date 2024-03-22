@@ -171,10 +171,6 @@ class ActivitySubscriber implements EventSubscriber
 
 		$changes = array_merge($changes, $uow->getEntityChangeSet($target));
 
-		foreach ($this->findOverrides($target) as $fieldName => $override) {
-			$changes = $override->process($changes, $fieldName);
-		}
-
 		if ($action == Action::Create) foreach ($changes as $key => [$old, $new]) {
 			$changes[$key] = $new;
 		}
@@ -192,6 +188,10 @@ class ActivitySubscriber implements EventSubscriber
 					'__cloner__' => null,
 				]);
 			}
+		}
+
+		foreach ($this->findOverrides($target) as $fieldName => $override) {
+			$changes = $override->process($changes, $fieldName);
 		}
 
 		return $changes;
