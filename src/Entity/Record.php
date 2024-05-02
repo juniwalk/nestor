@@ -22,6 +22,7 @@ use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Json;
 use Nette\Application\UI\Control;
 use Nette\Localization\Translator;
+use Stringable;
 
 #[ORM\MappedSuperclass]
 abstract class Record
@@ -41,6 +42,9 @@ abstract class Record
 	#[ORM\Column(type: 'string')]
 	protected string $message;
 
+	/**
+	 * @var class-string|null $target
+	 */
 	#[ORM\Column(type: 'string', nullable: true, options: ['default' => null])]
 	protected ?string $target = null;
 
@@ -123,7 +127,7 @@ abstract class Record
 	}
 
 
-	public function getMessageTranslated(Translator $translator): string
+	public function getMessageTranslated(Translator $translator): Stringable|string
 	{
 		return $translator->translate($this->message, Arrays::flatten($this->params));
 	}
@@ -143,8 +147,8 @@ abstract class Record
 		// 	$this->params = $target->getRecordParams();
 		// }
 
-		if ($target instanceof Proxy) {
-			$this->target = get_parent_class($target);
+		if ($target instanceof Proxy && $targetParent = get_parent_class($target)) {
+			$this->target = $targetParent;
 		}
 	}
 
@@ -161,8 +165,12 @@ abstract class Record
 	}
 
 
-	public function createTarget(EntityManager $entityManager): object
+	public function createTarget(EntityManager $entityManager): ?object
 	{
+		if (!$this->target) {
+			return null;
+		}
+
 		return $entityManager->getReference($this->target, $this->targetId);
 	}
 
@@ -197,6 +205,9 @@ abstract class Record
 	}
 
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function setParams(array $params): void
 	{
 		$this->params = [];
@@ -204,16 +215,22 @@ abstract class Record
 	}
 
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function addParams(array $params): void
 	{
 		$params = Arrays::map($params, fn($v) => Format::scalarize($v));
-		$params = array_filter($params, fn($v) => !is_null($v));
+		$params = array_filter((array) $params, fn($v) => !is_null($v));
 		$params = array_merge($params, $this->params ?? []);
 
 		$this->params = $params;
 	}
 
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function getParamsUnified(): array
 	{
 		return Arrays::flatten($this->getParams());

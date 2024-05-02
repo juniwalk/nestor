@@ -8,11 +8,11 @@
 namespace JuniWalk\Nestor\Entity\Subscribers;
 
 use Closure;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\Nestor\Chronicler;
 use JuniWalk\Nestor\Entity\Attributes\ActivityOverride;
@@ -21,6 +21,7 @@ use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Action;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Nestor\Interfaces\TargetProvider;
+use JuniWalk\ORM\Entity\Interfaces\Identified;
 use JuniWalk\Utils\Format;
 use Nette\Security\IIdentity as Identity;
 use Nette\Security\User as LoggedInUser;
@@ -28,10 +29,12 @@ use ReflectionClass;
 
 class ActivitySubscriber implements EventSubscriber
 {
+	/** @var array<string, bool> */
 	private static array $ignored = [];
 
-	private bool $isFlushing = false;
+	/** @var array<string, array{object, Action, array<string, mixed>, int|null}> */
 	private array $items = [];
+	private bool $isFlushing = false;
 	private ?Identity $user;
 
 	final public function __construct(
@@ -113,8 +116,8 @@ class ActivitySubscriber implements EventSubscriber
 			$record->setParams($params);
 			$record->setFinished(true);
 
-			if ($target instanceof TargetProvider) {
-				$record->setTarget($target->getRecordTarget());
+			if ($target instanceof TargetProvider && $target = $target->getRecordTarget()) {
+				$record->setTarget($target);
 			}
 
 			$this->entityManager->persist($record);
@@ -131,13 +134,13 @@ class ActivitySubscriber implements EventSubscriber
 		$changes = $this->findChanges($action, $target);
 		$hash = spl_object_hash($target);
 
-		if ($target instanceof Collection) {
-			$target = $target->getOwner();
+		if ($target instanceof PersistentCollection) {
+			$target = $target->getOwner() ?? $target;
 		}
 
-		$reflection = new ReflectionClass($target);
+		$class = new ReflectionClass($target);
 
-		if ($reflection->getAttributes(TargetIgnore::class)) {
+		if ($class->getAttributes(TargetIgnore::class)) {
 			return;
 		}
 
@@ -149,24 +152,32 @@ class ActivitySubscriber implements EventSubscriber
 			$target,
 			$action,
 			$changes,
-			$target->getId(),
+			null,
 		];
+
+		// TODO: Use new Identified interface from juniwalk/orm:^0.10
+		if (method_exists($target, 'getId')/* || $target instanceof Identified */) {
+			$this->items[$hash][3] = $target->getId();
+		}
 	}
 
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	private function findChanges(Action $action, object $target): array
 	{
 		$uow = $this->entityManager->getUnitOfWork();
 		$changes = [];
 
-		if ($target instanceof Collection) {
+		if ($target instanceof PersistentCollection) {
 			$fieldName = $target->getMapping()['fieldName'];
 			$changes[$fieldName] = [
 				$target->getSnapshot(),
 				$target->getValues(),
 			];
 
-			$target = $target->getOwner();
+			$target = $target->getOwner() ?? $target;
 		}
 
 		$changes = array_merge($changes, $uow->getEntityChangeSet($target));
@@ -198,21 +209,24 @@ class ActivitySubscriber implements EventSubscriber
 	}
 
 
+	/**
+	 * @return array<string, ActivityOverride>
+	 */
 	private function findOverrides(object $target): array
 	{
-		$reflection = new ReflectionClass($target);
-		$overrides = [];
+		$class = new ReflectionClass($target);
+		$result = [];
 
-		if ($target instanceof Proxy) {
-			$reflection = $reflection->getParentClass();
+		if ($target instanceof Proxy && $classParent = $class->getParentClass()) {
+			$class = $classParent;
 		}
 
-		foreach ($reflection->getProperties() as $property) {
+		foreach ($class->getProperties() as $property) {
 			foreach ($property->getAttributes(ActivityOverride::class) as $attribute) {
-				$overrides[$property->getName()] = $attribute->newInstance();
+				$result[$property->getName()] = $attribute->newInstance();
 			}
 		}
 
-		return $overrides;
+		return $result;
 	}
 }

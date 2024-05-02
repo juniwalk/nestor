@@ -7,7 +7,12 @@
 
 namespace JuniWalk\Nestor\Interfaces;
 
+use JuniWalk\Nestor\Enums\Action;
+
 interface ParamsProvider
 {
-	public function getRecordParams(): array;
+	/**
+	 * @return array<string, mixed>
+	 */
+	public function getRecordParams(?Action $action = null): array;
 }

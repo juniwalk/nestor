@@ -20,6 +20,10 @@ class ActivityOverride
 	}
 
 
+	/**
+	 * @param  array<string, mixed> $changes
+	 * @return array<string, mixed>
+	 */
 	public function process(array $changes, string $fieldName): array
 	{
 		switch ($this->strategy) {

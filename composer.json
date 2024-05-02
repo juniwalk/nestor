@@ -28,6 +28,8 @@
 	},
 
 	"require-dev": {
+		"nette/application": "^3.2",
+		"nette/security": "^3.2",
 		"nette/tester": "^2.5",
 		"phpstan/extension-installer": "^1.0",
 		"phpstan/phpstan": "^1.0",

@@ -8,9 +8,7 @@
 namespace JuniWalk\Nestor;
 
 use DateTime;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
-use Doctrine\ORM\ORMException;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Entity\RecordRepository;
 use JuniWalk\Nestor\Enums\Type;
@@ -18,6 +16,7 @@ use JuniWalk\Nestor\Exceptions\RecordExistsException;
 use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use JuniWalk\Utils\Strings;
+use Throwable;
 
 final class Chronicler
 {
@@ -41,7 +40,10 @@ final class Chronicler
 	}
 
 
-	public function log(string $event, string $message, iterable $params = []): void
+	/**
+	 * @param array<string, mixed> $params
+	 */
+	public function log(string $event, string $message, array $params = []): void
 	{
 		$record = $this->createRecord($event, $message, $params)
 			->withType(Type::Log);
@@ -50,7 +52,10 @@ final class Chronicler
 	}
 
 
-	public function todo(string $event, string $message, iterable $params = []): void
+	/**
+	 * @param array<string, mixed> $params
+	 */
+	public function todo(string $event, string $message, array $params = []): void
 	{
 		$record = $this->createRecord($event, $message, $params)
 			->withType(Type::Todo);
@@ -63,7 +68,7 @@ final class Chronicler
 	 * @throws RecordExistsException
 	 * @throws RecordFailedException
 	 */
-	public function record(RecordBuilder|Record $record, string $period = null): void
+	public function record(Record|RecordBuilder $record, ?string $period = null): void
 	{
 		if ($record instanceof RecordBuilder) {
 			$record = $record->create();
@@ -75,15 +80,15 @@ final class Chronicler
 
 		try {
 			$this->entityManager->persist($record);
-			$this->entityManager->flush($record);
+			$this->entityManager->flush($record);	// @phpstan-ignore-line
 
-		} catch (DBALException|ORMException $e) {
+		} catch (Throwable $e) {
 			throw RecordFailedException::fromRecord($record, $e);
 		}
 	}
 
 
-	public function isRecorded(Record $record, string $period = null): bool
+	public function isRecorded(Record $record, ?string $period = null): bool
 	{
 		$result = $this->recordRepository->findOneBy(function($qb) use ($record, $period) {
 			$qb->andWhere('e.hash = :hash')->setParameter('hash', $record->getHash());
@@ -104,6 +109,9 @@ final class Chronicler
 	}
 
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function createRecord(string $event, string $message, array $params = []): RecordBuilder
 	{
 		return (new RecordBuilder($this))

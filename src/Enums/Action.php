@@ -11,8 +11,10 @@ use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Enums\LabeledEnum;
 use JuniWalk\Utils\Enums\Traits\Labeled;
 
-enum Action: string
+enum Action: string implements LabeledEnum
 {
+	use Labeled;
+
 	case Create = 'create';
 	case Update = 'update';
 	case Delete = 'delete';
@@ -34,7 +36,6 @@ enum Action: string
 			self::Create => Color::Success,
 			self::Update => Color::Primary,
 			self::Delete => Color::Danger,
-			default => Color::Secondary,
 		};
 	}
 }

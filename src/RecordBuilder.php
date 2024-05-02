@@ -12,7 +12,7 @@ use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
-use JuniWalk\Nestor\Interfaces\TargetRelatedProvider;
+use JuniWalk\Nestor\Interfaces\TargetProvider;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Strings;
@@ -21,6 +21,7 @@ use Throwable;
 
 final class RecordBuilder
 {
+	/** @var array<string, mixed> */
 	private array $record = [];
 
 	public function __construct(
@@ -34,6 +35,8 @@ final class RecordBuilder
 	public function create(): Record
 	{
 		$entityName = $this->chronicler->getEntityName();
+
+		/** @var Record */
 		$record = new $entityName(
 			$this->record['event'],
 			$this->record['message'],
@@ -51,7 +54,7 @@ final class RecordBuilder
 	}
 
 
-	public function record(string $period = null): void
+	public function record(?string $period = null): void
 	{
 		$this->chronicler->record($this, $period);
 	}
@@ -85,7 +88,7 @@ final class RecordBuilder
 	}
 
 
-	public function withError(?Throwable $exception, bool $isFinished = null): static
+	public function withError(?Throwable $exception, ?bool $isFinished = null): static
 	{
 		$this->record['finished'] ??= $isFinished ?? !isset($exception);
 
@@ -151,6 +154,9 @@ final class RecordBuilder
 	}
 
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function withParams(array $params): static
 	{
 		foreach ($params as $key => $value) {
@@ -174,7 +180,7 @@ final class RecordBuilder
 
 	public function withParam(string $name, mixed $value): static
 	{
-		$this->record['params'][$name] = $value;
+		$this->record['params'][$name] = $value;	// @phpstan-ignore-line
 		return $this;
 	}
 
