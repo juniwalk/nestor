@@ -15,7 +15,6 @@ use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordExistsException;
 use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
-use JuniWalk\Utils\Strings;
 use Throwable;
 
 final class Chronicler
@@ -97,7 +96,7 @@ final class Chronicler
 				return $qb;
 			}
 
-			$dateEnd = new DateTime('-'.Strings::trim($period, '+-'));
+			$dateEnd = new DateTime('-'.trim($period, '+-'));
 			$dateStart = new DateTime;
 
 			$qb->andWhere('e.date < :dateStart AND e.date > :dateEnd')
