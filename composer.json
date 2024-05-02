@@ -11,11 +11,29 @@
 		"psr-4": {"JuniWalk\\Nestor\\": "src/"}
 	},
 
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"config": {
+		"sort-packages": true,
+		"allow-plugins": {
+			"phpstan/extension-installer": true
+		}
+	},
+
 	"require": {
 		"php": ">=8.1",
 		"doctrine/orm": "^2.0|^3.0",
 		"juniwalk/orm": "^0.7|^0.8|^0.9",
 		"juniwalk/utils": "^3.0"
+	},
+
+	"require-dev": {
+		"nette/tester": "^2.5",
+		"phpstan/extension-installer": "^1.0",
+		"phpstan/phpstan": "^1.0",
+		"phpstan/phpstan-nette": "^1.0",
+		"staabm/phpstan-todo-by": "^0.1",
+		"tracy/tracy": "^2.10"
 	},
 
 	"suggest": {
