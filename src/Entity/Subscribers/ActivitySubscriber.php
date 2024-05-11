@@ -21,18 +21,18 @@ use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Action;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Nestor\Interfaces\TargetProvider;
-use JuniWalk\ORM\Entity\Interfaces\Identified;
 use JuniWalk\Utils\Format;
 use Nette\Security\IIdentity as Identity;
 use Nette\Security\User as LoggedInUser;
 use ReflectionClass;
+use Throwable;
 
 class ActivitySubscriber implements EventSubscriber
 {
 	/** @var array<string, bool> */
 	private static array $ignored = [];
 
-	/** @var array<string, array{object, Action, array<string, mixed>, int|null}> */
+	/** @var array<string, array{object, Action, array<string, mixed>, mixed}> */
 	private array $items = [];
 	private bool $isFlushing = false;
 	private ?Identity $user;
@@ -52,7 +52,10 @@ class ActivitySubscriber implements EventSubscriber
 	}
 
 
-	final public function getSubscribedEvents()
+	/**
+	 * @return string[]
+	 */
+	final public function getSubscribedEvents(): array
 	{
 		return [
 			Events::onFlush,
@@ -148,16 +151,20 @@ class ActivitySubscriber implements EventSubscriber
 			return;
 		}
 
-		$this->items[$hash] = [
-			$target,
-			$action,
-			$changes,
-			null,
-		];
+		$this->items[$hash] = [$target, $action, $changes, null];
 
-		// TODO: Use new Identified interface from juniwalk/orm:^0.10
-		if (method_exists($target, 'getId')/* || $target instanceof Identified */) {
-			$this->items[$hash][3] = $target->getId();
+		try {
+			$fields = $this->entityManager
+				->getClassMetadata($target::class)
+				->getIdentifierValues($target);
+
+			if (sizeof($fields) < 2) {
+				$fields = current($fields);
+			}
+
+			$this->items[$hash][3] = $fields;
+
+		} catch (Throwable) {
 		}
 	}
 
