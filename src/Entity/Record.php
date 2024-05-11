@@ -133,7 +133,7 @@ abstract class Record implements Identified
 
 	public function setTarget(object $target, mixed $targetId = null): void
 	{
-		if (method_exists($target, 'getId')) {
+		if (!$targetId && $target instanceof Identified) {
 			$targetId ??= $target->getId();
 		}
 
