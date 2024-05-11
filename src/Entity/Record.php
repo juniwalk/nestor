@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
+use JuniWalk\ORM\Entity\Interfaces\Identified;
 use JuniWalk\ORM\Entity\Traits as Tools;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
@@ -25,7 +26,7 @@ use Nette\Localization\Translator;
 use Stringable;
 
 #[ORM\MappedSuperclass]
-abstract class Record
+abstract class Record implements Identified
 {
 	use Tools\Identifier;
 	use Tools\Ownerable;
@@ -42,9 +43,7 @@ abstract class Record
 	#[ORM\Column(type: 'string')]
 	protected string $message;
 
-	/**
-	 * @var class-string|null $target
-	 */
+	/** @var class-string|null $target */
 	#[ORM\Column(type: 'string', nullable: true, options: ['default' => null])]
 	protected ?string $target = null;
 
@@ -153,6 +152,9 @@ abstract class Record
 	}
 
 
+	/**
+	 * @return class-string|null
+	 */
 	public function getTarget(): ?string
 	{
 		return $this->target;
