@@ -15,17 +15,18 @@ use Doctrine\ORM\Proxy\Proxy;
 use JuniWalk\ORM\Entity\Interfaces\Identified;
 use JuniWalk\ORM\Entity\Traits as Tools;
 use JuniWalk\Nestor\Enums\Type;
-use JuniWalk\Nestor\Interfaces\ParamsProvider;
+// use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Json;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Link;
 use Nette\Localization\Translator;
 use Stringable;
 
 #[ORM\MappedSuperclass]
-abstract class Record implements Identified
+abstract class Record implements Identified, Stringable
 {
 	use Tools\Identifier;
 	use Tools\Ownerable;
@@ -76,7 +77,7 @@ abstract class Record implements Identified
 			'%level%' => $this->getLevel()->value,
 			'%event%' => $this->getEvent(),
 			'%message%' => $this->getMessageFormatted(),
-			'%params%' => Json::encode($this->getParams()),
+			'%params%' => Json::encode($this->params),
 		]);
 	}
 
@@ -119,15 +120,13 @@ abstract class Record implements Identified
 
 	public function getMessageFormatted(): string
 	{
-		$replace = Arrays::flatten($this->getParams());
-		$replace = Arrays::tokenize($replace);
-		return strtr($this->message, $replace);
+		return Format::tokens($this->message, $this->params);
 	}
 
 
 	public function getMessageTranslated(Translator $translator): Stringable|string
 	{
-		return $translator->translate($this->message, Arrays::flatten($this->params));
+		return $translator->translate($this->message, $this->getParamsUnified());
 	}
 
 
@@ -221,8 +220,8 @@ abstract class Record implements Identified
 	 */
 	public function addParams(array $params): void
 	{
-		$params = Arrays::map($params, fn($v) => Format::scalarize($v));
-		$params = array_filter((array) $params, fn($v) => !is_null($v));
+		$params = Arrays::mapRecursive($params, fn($v) => Format::serializable($v));
+		$params = array_filter($params, fn($v) => !is_null($v));
 		$params = array_merge($params, $this->params ?? []);
 
 		$this->params = $params;
@@ -234,7 +233,7 @@ abstract class Record implements Identified
 	 */
 	public function getParamsUnified(): array
 	{
-		return Arrays::flatten($this->getParams());
+		return Arrays::flatten($this->params);
 	}
 
 
@@ -250,7 +249,7 @@ abstract class Record implements Identified
 	}
 
 
-	abstract public function createLink(Control $control): ?string;
+	abstract public function createLink(Control $control): string|Link|null;
 
 
 	#[ORM\PreFlush]
