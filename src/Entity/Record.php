@@ -46,8 +46,8 @@ abstract class Record implements Identified
 	#[ORM\Column(type: 'string', nullable: true, options: ['default' => null])]
 	protected ?string $target = null;
 
-	#[ORM\Column(type: 'integer', nullable: true, options: ['default' => null])]
-	protected ?int $targetId = null;
+	#[ORM\Column(type: 'json', nullable: true, options: ['default' => null])]
+	protected mixed $targetId = null;
 
 	#[ORM\Column(type: 'datetimetz')]
 	protected DateTime $date;
@@ -131,7 +131,7 @@ abstract class Record implements Identified
 	}
 
 
-	public function setTarget(object $target, ?int $targetId = null): void
+	public function setTarget(object $target, mixed $targetId = null): void
 	{
 		if (method_exists($target, 'getId')) {
 			$targetId ??= $target->getId();
@@ -160,7 +160,7 @@ abstract class Record implements Identified
 	}
 
 
-	public function getTargetId(): ?int
+	public function getTargetId(): mixed
 	{
 		return $this->targetId;
 	}
@@ -168,7 +168,7 @@ abstract class Record implements Identified
 
 	public function createTarget(EntityManager $entityManager): ?object
 	{
-		if (!$this->target) {
+		if (!$this->target || $this->targetId) {
 			return null;
 		}
 
