@@ -9,9 +9,10 @@ namespace JuniWalk\Nestor;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
+use Doctrine\ORM\NoResultException;
 use JuniWalk\Nestor\Entity\Record;
-use JuniWalk\Nestor\Entity\RecordRepository;
 use JuniWalk\Nestor\Enums\Type;
+use JuniWalk\Nestor\Exceptions\PeriodNotValidException;
 use JuniWalk\Nestor\Exceptions\RecordExistsException;
 use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
@@ -20,12 +21,12 @@ use Throwable;
 final class Chronicler
 {
 	/**
+	 * @param  class-string<Record> $entityName
 	 * @throws RecordNotValidException
 	 */
 	public function __construct(
 		private readonly string $entityName,
 		private readonly EntityManager $entityManager,
-		private readonly RecordRepository $recordRepository,
 	) {
 		if (!is_subclass_of($entityName, Record::class)) {
 			throw new RecordNotValidException;
@@ -33,6 +34,9 @@ final class Chronicler
 	}
 
 
+	/**
+	 * @return class-string<Record>
+	 */
 	public function getEntityName(): string
 	{
 		return $this->entityName;
@@ -44,9 +48,7 @@ final class Chronicler
 	 */
 	public function log(string $event, string $message, array $params = []): void
 	{
-		$record = $this->createRecord($event, $message, $params)
-			->withType(Type::Log);
-
+		$record = $this->createRecord($event, $message, $params)->withType(Type::Log);
 		$this->record($record);
 	}
 
@@ -56,9 +58,7 @@ final class Chronicler
 	 */
 	public function todo(string $event, string $message, array $params = []): void
 	{
-		$record = $this->createRecord($event, $message, $params)
-			->withType(Type::Todo);
-
+		$record = $this->createRecord($event, $message, $params)->withType(Type::Todo);
 		$this->record($record);
 	}
 
@@ -87,24 +87,40 @@ final class Chronicler
 	}
 
 
+	/**
+	 * @throws PeriodNotValidException
+	 */
 	public function isRecorded(Record $record, ?string $period = null): bool
 	{
-		$result = $this->recordRepository->findOneBy(function($qb) use ($record, $period) {
-			$qb->andWhere('e.hash = :hash')->setParameter('hash', $record->getHash());
+		$qb = $this->entityManager->createQueryBuilder()
+			->select('e')->from($this->entityName, 'e')
+			->where('e.hash = :hash');
 
-			if (is_null($period)) {
-				return $qb;
+		if (isset($period)) {
+			$dateStart = new DateTime('midnight next day');
+			$dateEnd = (new DateTime)->modify($period)
+				->modify('midnight');
+
+			if ($dateEnd > $dateStart) {
+				throw PeriodNotValidException::fromPeriod($period);
 			}
 
-			$dateEnd = new DateTime('-'.trim($period, '+-'));
-			$dateStart = new DateTime;
-
 			$qb->andWhere('e.date < :dateStart AND e.date > :dateEnd')
-				->setParameter('dateStart', $dateStart->setTime(23, 59, 59))
-				->setParameter('dateEnd', $dateEnd->setTime(0, 0, 0));
-		});
+				->setParameter('dateStart', $dateStart)
+				->setParameter('dateEnd', $dateEnd);
+		}
 
-		return $result instanceof Record;
+		try {
+			$qb->getQuery()->setMaxResults(1)
+				->setParameter('hash', $record->getHash())
+				->getSingleResult();
+
+			return true;
+
+		} catch (NoResultException) {
+		}
+
+		return false;
 	}
 
 
