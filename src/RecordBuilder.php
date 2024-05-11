@@ -7,26 +7,45 @@
 
 namespace JuniWalk\Nestor;
 
-use DateTimeInterface;
+use DateTime;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Nestor\Interfaces\TargetProvider;
 use JuniWalk\Utils\Format;
+use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Strings;
 use Nette\Security\IIdentity as Identity;
 use Throwable;
 
+/**
+ * @phpstan-type RecordStructure array{
+ * 		event: string,
+ * 		message: string,
+ * 		date: DateTime,
+ * 		type?: Type,
+ * 		level?: Color,
+ * 		note?: ?string,
+ * 		finished?: bool,
+ * 		event?: ?string,
+ * 		target?: object,
+ * 		owner?: ?Identity,
+ * 		params?: array<string, mixed>,
+ * }
+ */
 final class RecordBuilder
 {
-	/** @var array<string, mixed> */
-	private array $record = [];
+	public const RequiredFields = ['event', 'message', 'date'];
+
+	/** @var RecordStructure */
+	private array $record;
 
 	public function __construct(
 		private readonly Chronicler $chronicler,
-	) {}
+	) {
+	}
 
 
 	/**
@@ -34,9 +53,15 @@ final class RecordBuilder
 	 */
 	public function create(): Record
 	{
-		$entityName = $this->chronicler->getEntityName();
+		foreach (static::RequiredFields as $field) {
+			if (isset($this->record[$field])) {
+				continue;
+			}
 
-		/** @var Record */
+			throw RecordNotValidException::fromRecord($field, $this->record);
+		}
+
+		$entityName = $this->chronicler->getEntityName();
 		$record = new $entityName(
 			$this->record['event'],
 			$this->record['message'],
@@ -44,7 +69,7 @@ final class RecordBuilder
 
 		foreach ($this->record as $key => $value) {
 			if (!method_exists($record, 'set'.$key)) {
-				throw new RecordNotValidException;
+				throw RecordNotValidException::fromMethod($key, $record);
 			}
 
 			$record->{'set'.$key}($value);
@@ -96,10 +121,7 @@ final class RecordBuilder
 			return $this;
 		}
 
-		$className = Format::className($exception);
-		$className = Format::camelCase($className);
-		$className = ucfirst($className);
-
+		$className = Format::className($exception, Casing::Pascal);
 		$this->record['note'] = $className.': '.$exception->getMessage();
 		return $this;
 	}
@@ -119,7 +141,7 @@ final class RecordBuilder
 		}
 
 		if ($target instanceof TargetProvider) {
-			$target = $target->getRecordTarget();
+			$target = $target->getRecordTarget() ?? $target;
 		}
 
 		$this->record['target'] = $target;
@@ -127,7 +149,7 @@ final class RecordBuilder
 	}
 
 
-	public function withDate(DateTimeInterface $date): static
+	public function withDate(DateTime $date): static
 	{
 		$this->record['date'] = $date;
 		return $this;
@@ -180,7 +202,7 @@ final class RecordBuilder
 
 	public function withParam(string $name, mixed $value): static
 	{
-		$this->record['params'][$name] = $value;	// @phpstan-ignore-line
+		$this->record['params'][$name] = $value;
 		return $this;
 	}
 
