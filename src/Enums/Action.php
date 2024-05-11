@@ -22,7 +22,7 @@ enum Action: string implements LabeledEnum
 
 	public function label(): string
 	{
-		return match($this) {
+		return match ($this) {
 			self::Create => 'nestor.enum.action.create',
 			self::Update => 'nestor.enum.action.update',
 			self::Delete => 'nestor.enum.action.delete',
@@ -32,7 +32,7 @@ enum Action: string implements LabeledEnum
 
 	public function color(): Color
 	{
-		return match($this) {
+		return match ($this) {
 			self::Create => Color::Success,
 			self::Update => Color::Primary,
 			self::Delete => Color::Danger,

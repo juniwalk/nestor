@@ -21,16 +21,13 @@ enum Type: string implements LabeledEnum
 
 	public function label(): string
 	{
-		return match($this) {
-			self::Log => 'nestor.enum.type.log',
-			self::Todo => 'nestor.enum.type.todo',
-		};
+		return 'nestor.enum.type.'.$this->value;
 	}
 
 
 	public function color(): Color
 	{
-		return match($this) {
+		return match ($this) {
 			self::Log => Color::Warning,
 			self::Todo => Color::Info,
 		};
@@ -39,7 +36,7 @@ enum Type: string implements LabeledEnum
 
 	public function icon(): ?string
 	{
-		return match($this) {
+		return match ($this) {
 			self::Log => 'fa-plus-square',
 			self::Todo => 'fa-minus-square',
 		};
