@@ -161,7 +161,7 @@ abstract class Record implements Identified, Stringable
 
 	public function createTarget(EntityManager $entityManager): ?object
 	{
-		if (!$this->target || $this->targetId) {
+		if (!$this->target || !$this->targetId) {
 			return null;
 		}
 
