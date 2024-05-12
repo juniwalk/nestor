@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor\Entity;
 
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
@@ -169,9 +170,9 @@ abstract class Record implements Identified, Stringable
 	}
 
 
-	public function setDate(DateTime $date): void
+	public function setDate(DateTimeInterface $date): void
 	{
-		$this->date = clone $date;
+		$this->date = DateTime::createFromInterface($date);
 	}
 
 
