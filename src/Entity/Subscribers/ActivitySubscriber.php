@@ -21,6 +21,7 @@ use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Action;
 use JuniWalk\Nestor\Interfaces\ParamsProvider;
 use JuniWalk\Nestor\Interfaces\TargetProvider;
+use JuniWalk\ORM\Entity\Interfaces\Identified;
 use JuniWalk\Utils\Format;
 use Nette\Security\IIdentity as Identity;
 use Nette\Security\User as LoggedInUser;
@@ -157,6 +158,11 @@ class ActivitySubscriber implements EventSubscriber
 		}
 
 		$this->items[$hash] = [$target, $action, $changes, null];
+
+		if ($target instanceof Identified) {
+			$this->items[$hash][3] = $target->getId();
+			return;
+		}
 
 		try {
 			$fields = $this->entityManager
