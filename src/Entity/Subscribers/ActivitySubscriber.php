@@ -37,7 +37,11 @@ class ActivitySubscriber implements EventSubscriber
 	private bool $isFlushing = false;
 	private ?Identity $user;
 
+	/**
+	 * @param non-empty-string $messageFormat
+	 */
 	final public function __construct(
+		private readonly string $messageFormat,
 		private readonly Chronicler $chronicler,
 		private readonly LoggedInUser $loggedInUser,
 		private readonly EntityManager $entityManager,
@@ -104,9 +108,10 @@ class ActivitySubscriber implements EventSubscriber
 		$this->isFlushing = true;
 
 		foreach ($this->items as [$target, $action, $params, $targetId]) {
-			// TODO: Add configuration into extension with message format so there is
-			// TODO: no application specific translation string available in this scope
-			$message = 'web.activity.'.Format::className($target).'-'.$action->value;
+			$message = Format::tokens($this->messageFormat, [
+				'className' => Format::className($target),
+				'action' => $action->value,
+			]);
 
 			if ($target instanceof ParamsProvider) {
 				$params = array_merge($params, $target->getRecordParams($action));

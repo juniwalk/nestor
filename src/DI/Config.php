@@ -11,5 +11,9 @@ class Config
 {
 	/** @var class-string */
 	public string $entityName;
+
+	/** @var non-empty-string */
+	public string $messageFormat = '{className}-{action}';
+
 	public bool $watchActivity = false;
 }

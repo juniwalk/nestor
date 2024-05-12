@@ -44,6 +44,6 @@ final class NestorExtension extends CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix('activitySubscriber'))
-			->setFactory(ActivitySubscriber::class);
+			->setFactory(ActivitySubscriber::class, [$config->messageFormat]);
 	}
 }
