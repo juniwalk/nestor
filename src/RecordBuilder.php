@@ -24,7 +24,7 @@ use Throwable;
  * @phpstan-type RecordStructure array{
  * 		event: string,
  * 		message: string,
- * 		date: DateTime,
+ * 		date?: DateTime,
  * 		type?: Type,
  * 		level?: Color,
  * 		note?: ?string,
@@ -37,7 +37,7 @@ use Throwable;
  */
 final class RecordBuilder
 {
-	public const RequiredFields = ['event', 'message', 'date'];
+	public const RequiredFields = ['event', 'message'];
 
 	/** @var RecordStructure */
 	private array $record;
