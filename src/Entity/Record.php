@@ -130,14 +130,21 @@ abstract class Record implements Identified, Stringable
 	}
 
 
-	public function setTarget(object $target, mixed $targetId = null): void
+	public function setTarget(?object $target, mixed $targetId = null): void
 	{
+		if (is_null($target)) {
+			$this->targetId = null;
+			$this->target = null;
+
+			return;
+		}
+
 		if (!$targetId && $target instanceof Identified) {
 			$targetId ??= $target->getId();
 		}
 
-		$this->target = $target::class;
 		$this->targetId = $targetId;
+		$this->target = $target::class;
 
 		if ($target instanceof Proxy && $targetParent = get_parent_class($target)) {
 			$this->target = $targetParent;

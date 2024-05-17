@@ -30,7 +30,7 @@ use Throwable;
  * 		note?: ?string,
  * 		finished?: bool,
  * 		event?: ?string,
- * 		target?: object,
+ * 		target?: ?object,
  * 		owner?: ?Identity,
  * 		params?: array<string, mixed>,
  * }
@@ -134,7 +134,7 @@ final class RecordBuilder
 	}
 
 
-	public function withTarget(object $target): static
+	public function withTarget(?object $target): static
 	{
 		if ($target instanceof ParamsProvider) {
 			$this->withParams($target->getRecordParams());
