@@ -94,7 +94,7 @@ final class Chronicler
 	{
 		$qb = $this->entityManager->createQueryBuilder()
 			->select('e')->from($this->entityName, 'e')
-			->where('e.hash = :hash');
+			->where('e.hash = :hash AND e.isFinished = false');
 
 		if (isset($period)) {
 			$dateStart = new DateTime('midnight next day');
