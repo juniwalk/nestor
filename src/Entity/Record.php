@@ -23,14 +23,17 @@ use JuniWalk\Utils\Json;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Link;
 use Nette\Localization\Translator;
+use Nette\Security\IIdentity as Identity;
 use Stringable;
 
 #[ORM\MappedSuperclass]
 abstract class Record implements Identified, Stringable
 {
 	use Tools\Identifier;
+	/** @use Tools\Ownerable<Identity> */
 	use Tools\Ownerable;
 	use Tools\Parametrized;
+	/** @use Tools\Finishable<Identity> */
 	use Tools\Finishable;
 	use Tools\Hashable;
 
