@@ -257,6 +257,12 @@ abstract class Record implements Identified, Stringable
 	abstract public function createLink(Control $control): string|Link|null;
 
 
+	protected function createHashParams(): mixed
+	{
+		return (string) $this;
+	}
+
+
 	#[ORM\PreFlush]
 	public function onPreFlush(PreFlushEventArgs $event): void
 	{
