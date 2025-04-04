@@ -8,6 +8,7 @@
 namespace JuniWalk\Nestor;
 
 use DateTimeInterface;
+use JsonSerializable;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
@@ -20,31 +21,32 @@ use JuniWalk\Utils\Strings;
 use Nette\Security\IIdentity as Identity;
 use Throwable;
 
-/**
- * @phpstan-type RecordStructure array{
- * 		event: string,
- * 		message: string,
- * 		date?: DateTimeInterface,
- * 		type?: Type,
- * 		level?: Color,
- * 		note?: ?string,
- * 		finished?: bool,
- * 		event?: ?string,
- * 		target?: ?object,
- * 		owner?: ?Identity,
- * 		params?: array<string, mixed>,
- * }
- */
-final class RecordBuilder
+final class RecordBuilder implements JsonSerializable
 {
 	public const RequiredFields = ['event', 'message'];
 
-	/** @var RecordStructure */
-	private array $record;
+	private string $event;
+	private string $message;
+	private DateTimeInterface $date;
+	private Type $type;
+	private Color $level;
+	private ?string $note;
+	private bool $finished;
+	private ?object $target;
+	private ?Identity $owner;
+
+	/** @var array<string, mixed> */
+	private array $params;
 
 	public function __construct(
 		private readonly Chronicler $chronicler,
 	) {
+	}
+
+
+	public function jsonSerialize(): mixed
+	{
+		return get_object_vars($this);
 	}
 
 
@@ -54,20 +56,17 @@ final class RecordBuilder
 	public function create(): Record
 	{
 		foreach (static::RequiredFields as $field) {
-			if (isset($this->record[$field])) {
+			if (isset($this->$field)) {
 				continue;
 			}
 
-			throw RecordNotValidException::fromRecord($field, $this->record);
+			throw RecordNotValidException::fromRecord($field, $this);
 		}
 
 		$entityName = $this->chronicler->getEntityName();
-		$record = new $entityName(
-			$this->record['event'],
-			$this->record['message'],
-		);
+		$record = new $entityName($this->event, $this->message);
 
-		foreach ($this->record as $key => $value) {
+		foreach (get_object_vars($this) as $key => $value) {
 			if (!method_exists($record, 'set'.$key)) {
 				throw RecordNotValidException::fromMethod($key, $record);
 			}
@@ -87,49 +86,50 @@ final class RecordBuilder
 
 	public function withType(Type $type): static
 	{
-		$this->record['type'] = $type;
+		$this->type = $type;
 		return $this;
 	}
 
 
 	public function withLevel(Color $level): static
 	{
-		$this->record['level'] = $level;
+		$this->level = $level;
 		return $this;
 	}
 
 
 	public function withMessage(string $message): static
 	{
-		$this->record['message'] = $message;
+		$this->message = $message;
 		return $this;
 	}
 
 
 	public function withNote(?string $note): static
 	{
-		$this->record['note'] = $note;
+		$this->note = $note;
 		return $this;
 	}
 
 
 	public function withError(?Throwable $exception, ?bool $isFinished = null): static
 	{
-		$this->record['finished'] ??= $isFinished ?? !isset($exception);
+		$this->finished ??= $isFinished ?? !isset($exception);
 
 		if (!$exception instanceof Throwable) {
 			return $this;
 		}
 
 		$className = Format::className($exception, Casing::Pascal);
-		$this->record['note'] = $className.': '.$exception->getMessage();
+
+		$this->note = $className.': '.$exception->getMessage();
 		return $this;
 	}
 
 
-	public function withEvent(?string $event): static
+	public function withEvent(string $event): static
 	{
-		$this->record['event'] = $event;
+		$this->event = $event;
 		return $this;
 	}
 
@@ -144,34 +144,28 @@ final class RecordBuilder
 			$target = $target->getRecordTarget() ?? $target;
 		}
 
-		$this->record['target'] = $target;
+		$this->target = $target;
 		return $this;
 	}
 
 
 	public function withDate(DateTimeInterface $date): static
 	{
-		$this->record['date'] = $date;
+		$this->date = $date;
 		return $this;
 	}
 
 
 	public function withOwner(?Identity $owner): static
 	{
-		$this->record['owner'] = $owner;
+		$this->owner = $owner;
 		return $this;
-	}
-
-
-	public function withAuthor(Identity $owner): static
-	{
-		return $this->withOwner($owner);
 	}
 
 
 	public function withFinished(bool $isFinished): static
 	{
-		$this->record['finished'] = $isFinished;
+		$this->finished = $isFinished;
 		return $this;
 	}
 
@@ -194,22 +188,23 @@ final class RecordBuilder
 			unset($params[$key]);
 		}
 
-		$this->record['params'] ??= [];
-		$this->record['params'] += $params;
+		$this->params ??= [];
+		$this->params += $params;
+
 		return $this;
 	}
 
 
 	public function withParam(string $name, mixed $value): static
 	{
-		$this->record['params'][$name] = $value;
+		$this->params[$name] = $value;
 		return $this;
 	}
 
 
 	public function clearParams(): static
 	{
-		unset($this->record['params']);
+		unset($this->params);
 		return $this;
 	}
 }

@@ -34,7 +34,7 @@ enum Type: string implements LabeledEnum
 	}
 
 
-	public function icon(): ?string
+	public function icon(): string
 	{
 		return match ($this) {
 			self::Log => 'fa-plus-square',

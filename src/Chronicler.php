@@ -28,7 +28,7 @@ final class Chronicler
 		private readonly string $entityName,
 		private readonly EntityManager $entityManager,
 	) {
-		if (!is_subclass_of($entityName, Record::class)) {
+		if (!is_subclass_of($entityName, Record::class)) {	// @phpstan-ignore function.alreadyNarrowedType (Let's not treat this as certain)
 			throw new RecordNotValidException;
 		}
 	}
