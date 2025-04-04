@@ -98,7 +98,7 @@ final class Chronicler
 
 		if (isset($period)) {
 			$dateStart = new DateTime('midnight next day');
-			$dateEnd = (new DateTime)->modify($period)
+			$dateEnd = (new DateTime)->modify('-'.ltrim($period, '+-'))
 				->modify('midnight');
 
 			if ($dateEnd > $dateStart) {
