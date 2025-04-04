@@ -13,7 +13,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\PersistentCollection;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\Proxy;
 use JuniWalk\Nestor\Chronicler;
 use JuniWalk\Nestor\Entity\Attributes\ActivityOverride;
 use JuniWalk\Nestor\Entity\Attributes\TargetIgnore;

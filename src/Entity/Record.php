@@ -12,7 +12,7 @@ use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\Proxy;
 use JuniWalk\ORM\Entity\Interfaces\Identified;
 use JuniWalk\ORM\Entity\Traits as Tools;
 use JuniWalk\Nestor\Enums\Type;

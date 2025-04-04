@@ -21,10 +21,10 @@
 	},
 
 	"require": {
-		"php": ">=8.1",
-		"doctrine/orm": "^2.0|^3.0",
-		"juniwalk/orm": "^1.0|^2.0",
-		"juniwalk/utils": "^3.0|^4.0"
+		"php": ">=8.3",
+		"doctrine/orm": "^3.0",
+		"juniwalk/orm": "^3.0",
+		"juniwalk/utils": "^4.0"
 	},
 
 	"require-dev": {
