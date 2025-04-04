@@ -8,7 +8,6 @@
 namespace JuniWalk\Nestor;
 
 use DateTimeInterface;
-use JsonSerializable;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
@@ -21,7 +20,7 @@ use JuniWalk\Utils\Strings;
 use Nette\Security\IIdentity as Identity;
 use Throwable;
 
-final class RecordBuilder implements JsonSerializable
+final class RecordBuilder
 {
 	public const RequiredFields = ['event', 'message'];
 
@@ -44,29 +43,27 @@ final class RecordBuilder implements JsonSerializable
 	}
 
 
-	public function jsonSerialize(): mixed
-	{
-		return get_object_vars($this);
-	}
-
-
 	/**
 	 * @throws RecordNotValidException
 	 */
 	public function create(): Record
 	{
+		$entityName = $this->chronicler->getEntityName();
+		$package = array_diff_key(get_object_vars($this), [
+			'chronicler' => true,
+		]);
+
 		foreach (static::RequiredFields as $field) {
-			if (isset($this->$field)) {
+			if (isset($package[$field])) {
 				continue;
 			}
 
-			throw RecordNotValidException::fromRecord($field, $this);
+			throw RecordNotValidException::fromRecord($field, $package);
 		}
 
-		$entityName = $this->chronicler->getEntityName();
 		$record = new $entityName($this->event, $this->message);
 
-		foreach (get_object_vars($this) as $key => $value) {
+		foreach ($package as $key => $value) {
 			if (!method_exists($record, 'set'.$key)) {
 				throw RecordNotValidException::fromMethod($key, $record);
 			}

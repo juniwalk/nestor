@@ -8,13 +8,15 @@
 namespace JuniWalk\Nestor\Exceptions;
 
 use JuniWalk\Nestor\Entity\Record;
-use JuniWalk\Nestor\RecordBuilder;
 
 final class RecordNotValidException extends NestorException
 {
-	public static function fromRecord(string $field, RecordBuilder $record): static
+	/**
+	 * @param array<string, mixed> $package
+	 */
+	public static function fromRecord(string $field, array $package): static
 	{
-		return new static('Missing field "'.$field.'" in record structure: '.json_encode($record));
+		return new static('Missing field "'.$field.'" in record structure: '.json_encode($package));
 	}
 
 
