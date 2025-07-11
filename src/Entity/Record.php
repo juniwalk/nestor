@@ -10,7 +10,6 @@ namespace JuniWalk\Nestor\Entity;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface as EntityManager;
-use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\Proxy;
 use JuniWalk\ORM\Entity\Interfaces\Identified;
@@ -264,7 +263,7 @@ abstract class Record implements Identified, Stringable
 
 
 	#[ORM\PreFlush]
-	public function onPreFlush(PreFlushEventArgs $event): void
+	public function handleHashCreation(): void
 	{
 		$this->hash ??= $this->getHash();
 	}

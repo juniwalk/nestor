@@ -67,13 +67,13 @@ final class Chronicler
 	 * @throws RecordExistsException
 	 * @throws RecordFailedException
 	 */
-	public function record(Record|RecordBuilder $record, ?string $period = null): void
+	public function record(Record|RecordBuilder $record, ?string $period = null, bool $ignoreFinished = true): void
 	{
 		if ($record instanceof RecordBuilder) {
 			$record = $record->create();
 		}
 
-		if ($period && $this->isRecorded($record, $period)) {
+		if ($period && $this->isRecorded($record, $period, $ignoreFinished)) {
 			throw RecordExistsException::fromRecord($record, $period);
 		}
 
@@ -90,22 +90,25 @@ final class Chronicler
 	/**
 	 * @throws PeriodNotValidException
 	 */
-	public function isRecorded(Record $record, ?string $period = null): bool
+	public function isRecorded(Record $record, ?string $period = null, bool $ignoreFinished = true): bool
 	{
 		$qb = $this->entityManager->createQueryBuilder()
 			->select('e')->from($this->entityName, 'e')
-			->where('e.hash = :hash AND e.isFinished = false');
+			->where('e.hash = :hash');
+
+		if ($ignoreFinished === true) {
+			$qb->andWhere('e.isFinished = false');
+		}
 
 		if (isset($period)) {
-			$dateStart = new DateTime('midnight next day');
-			$dateEnd = (new DateTime)->modify('-'.ltrim($period, '+-'))
-				->modify('midnight');
+			$dateStart = (new DateTime('midnight'))->modify('-'.ltrim($period, '+-'));
+			$dateEnd = new DateTime('midnight next day');
 
-			if ($dateEnd > $dateStart) {
+			if ($dateStart > $dateEnd) {
 				throw PeriodNotValidException::fromPeriod($period);
 			}
 
-			$qb->andWhere('e.date < :dateStart AND e.date > :dateEnd')
+			$qb->andWhere('e.date >= :dateStart AND e.date <= :dateEnd')
 				->setParameter('dateStart', $dateStart)
 				->setParameter('dateEnd', $dateEnd);
 		}
