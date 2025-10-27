@@ -1,0 +1,15 @@
+
+#
+# @copyright Martin Procházka (c) 2025
+# @license   MIT License
+#
+
+enum:
+	action:
+		create: 'Vytvoření'
+		update: 'Úprava'
+		delete: 'Odstranění'
+
+	type:
+		todo: 'Úkol'
+		log: 'Záznam'
