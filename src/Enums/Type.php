@@ -28,8 +28,8 @@ enum Type: string implements LabeledEnum
 	public function color(): Color
 	{
 		return match ($this) {
-			self::Log => Color::Warning,
-			self::Todo => Color::Info,
+			self::Log => Color::Secondary,
+			self::Todo => Color::Warning,
 		};
 	}
 
