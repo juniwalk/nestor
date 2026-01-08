@@ -159,7 +159,7 @@ class ActivitySubscriber implements EventSubscriber
 
 		$this->items[$hash] = [$target, $action, $changes, null];
 
-		if ($target instanceof Identified) {
+		if ($target instanceof Identified && $target->isIdAvailable()) {
 			$this->items[$hash][3] = $target->getId();
 			return;
 		}
