@@ -189,6 +189,7 @@ class ActivitySubscriber implements EventSubscriber
 		$changes = [];
 
 		if ($target instanceof PersistentCollection) {
+			/** @var string */
 			$fieldName = $target->getMapping()['fieldName'];
 			$changes[$fieldName] = [
 				$target->getSnapshot(),
