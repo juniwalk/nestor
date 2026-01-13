@@ -141,12 +141,12 @@ abstract class Record implements Identified, Stringable
 			return;
 		}
 
-		if (!$targetId && $target instanceof Identified) {
-			$targetId ??= $target->getId();
+		if (!$targetId && $target instanceof Identified && $target->isIdAvailable()) {
+			$targetId = $target->getId();
 		}
 
-		$this->targetId = $targetId;
 		$this->target = $target::class;
+		$this->targetId = $targetId;
 
 		if ($target instanceof Proxy && $targetParent = get_parent_class($target)) {
 			$this->target = $targetParent;
