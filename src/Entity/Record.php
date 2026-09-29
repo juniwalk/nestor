@@ -25,6 +25,7 @@ use Nette\Localization\Translator;
 use Nette\Security\IIdentity as Identity;
 use Ramsey\Uuid\Uuid as UuidFactory;
 use Stringable;
+use Throwable;
 
 #[ORM\MappedSuperclass]
 abstract class Record implements Identified, Stringable
@@ -144,8 +145,12 @@ abstract class Record implements Identified, Stringable
 			return;
 		}
 
-		if (!$targetId && $target instanceof Identified && $target->isIdAvailable()) {
-			$targetId = $target->getId();
+		try {
+			if (!$targetId && $target instanceof Identified) {
+				$targetId = $target->getId();
+			}
+
+		} catch (Throwable) {
 		}
 
 		$this->target = $target::class;
