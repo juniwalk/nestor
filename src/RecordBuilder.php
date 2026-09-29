@@ -20,6 +20,10 @@ use JuniWalk\Utils\Strings;
 use Nette\Security\IIdentity as Identity;
 use Throwable;
 
+use function array_diff_key;
+use function get_object_vars;
+use function method_exists;
+
 final class RecordBuilder
 {
 	public const RequiredFields = ['event', 'message'];

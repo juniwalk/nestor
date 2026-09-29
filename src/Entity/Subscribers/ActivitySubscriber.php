@@ -28,6 +28,14 @@ use Nette\Security\User as LoggedInUser;
 use ReflectionClass;
 use Throwable;
 
+use function array_diff_key;
+use function array_filter;
+use function array_merge;
+use function current;
+use function get_object_vars;
+use function sizeof;
+use function spl_object_hash;
+
 class ActivitySubscriber implements EventSubscriber
 {
 	/** @var array<string, bool> */
@@ -199,10 +207,16 @@ class ActivitySubscriber implements EventSubscriber
 			$target = $target->getOwner() ?? $target;
 		}
 
-		$changes = array_merge($changes, $uow->getEntityChangeSet($target));
+		foreach ($uow->getEntityChangeSet($target) as $key => $change) {
+			if ($change instanceof PersistentCollection) {
+				continue;
+			}
 
-		if ($action == Action::Create) foreach ($changes as $key => [$old, $new]) {
-			$changes[$key] = $new;
+			$changes[$key] = $change;
+		}
+
+		if ($action == Action::Create) foreach ($changes as $key => $change) {
+			$changes[$key] = $change[1];
 		}
 
 		if ($action == Action::Delete && !$changes) {

@@ -9,6 +9,9 @@ namespace JuniWalk\Nestor\Exceptions;
 
 use JuniWalk\Nestor\Entity\Record;
 
+use function json_encode;
+use function ucfirst;
+
 final class RecordNotValidException extends NestorException
 {
 	/**
