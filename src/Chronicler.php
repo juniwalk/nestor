@@ -8,7 +8,9 @@
 namespace JuniWalk\Nestor;
 
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface as EntityManager;
+use Doctrine\Common\EventManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use JuniWalk\Nestor\Entity\Record;
 use JuniWalk\Nestor\Enums\Type;
@@ -18,19 +20,34 @@ use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
 use Throwable;
 
+use function assert;
+use function is_subclass_of;
+use function ltrim;
+
 final class Chronicler
 {
+	private readonly string $entityName;
+	private readonly EntityManager $entityManager;
+
 	/**
 	 * @param  class-string<Record> $entityName
 	 * @throws RecordNotValidException
 	 */
-	public function __construct(
-		private readonly string $entityName,
-		private readonly EntityManager $entityManager,
-	) {
-		if (!is_subclass_of($entityName, Record::class)) {	// @phpstan-ignore function.alreadyNarrowedType (Let's not treat this as certain)
+	public function __construct(string $entityName, EntityManagerInterface $entityManager)
+	{
+		if (!is_subclass_of($entityName, Record::class)) {
 			throw new RecordNotValidException;
 		}
+
+		$eventManager = $entityManager->getEventManager();
+		assert($eventManager instanceof EventManager);
+
+		$this->entityName = $entityName;
+		$this->entityManager = new EntityManager(
+			$entityManager->getConnection(),
+			$entityManager->getConfiguration(),
+			$eventManager,
+		);
 	}
 
 
@@ -79,7 +96,7 @@ final class Chronicler
 
 		try {
 			$this->entityManager->persist($record);
-			$this->entityManager->flush($record);	// @phpstan-ignore-line
+			$this->entityManager->flush();
 
 		} catch (Throwable $e) {
 			throw RecordFailedException::fromRecord($record, $e);
