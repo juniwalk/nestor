@@ -23,15 +23,16 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Link;
 use Nette\Localization\Translator;
 use Nette\Security\IIdentity as Identity;
+use Ramsey\Uuid\Uuid as UuidFactory;
 use Stringable;
 
 #[ORM\MappedSuperclass]
 abstract class Record implements Identified, Stringable
 {
-	use Tools\Identifier;
+	use Tools\IdentifierUUID;
 	/** @use Tools\Ownerable<Identity> */
 	use Tools\Ownerable;
-	use Tools\Parametrized;
+	use Tools\ParamsSimplified;
 	/** @use Tools\Finishable<Identity> */
 	use Tools\Finishable;
 	use Tools\Hashable;
@@ -67,6 +68,8 @@ abstract class Record implements Identified, Stringable
 		$this->date = new DateTime;
 		$this->message = $message;
 		$this->event = $event;
+
+		$this->id = UuidFactory::uuid7($this->date);
 	}
 
 
@@ -224,9 +227,9 @@ abstract class Record implements Identified, Stringable
 	 */
 	public function addParams(array $params): void
 	{
-		$params = Arrays::mapRecursive($params, fn($v) => Format::serializable($v));
-		$params = array_filter($params, fn($v) => !is_null($v));
-		$params = array_merge($params, $this->params ?? []);
+		$params = Arrays::mapRecursive($params, static fn($v) => Format::serializable($v));
+		$params = array_filter($params, static fn($v) => !is_null($v));
+		$params = array_merge($params, $this->params);
 
 		$this->params = $params;
 	}
