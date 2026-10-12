@@ -9,6 +9,7 @@ namespace JuniWalk\Nestor;
 
 use DateTime;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
@@ -40,11 +41,15 @@ final class Chronicler
 		}
 
 		$eventManager = $entityManager->getEventManager();
+		$connection = $entityManager->getConnection();
 		assert($eventManager instanceof EventManager);
 
 		$this->entityName = $entityName;
 		$this->entityManager = new EntityManager(
-			$entityManager->getConnection(),
+			DriverManager::getConnection(
+				$connection->getParams(),
+				$connection->getConfiguration(),
+			),
 			$entityManager->getConfiguration(),
 			$eventManager,
 		);
