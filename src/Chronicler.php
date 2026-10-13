@@ -99,6 +99,11 @@ final class Chronicler
 			throw RecordExistsException::fromRecord($record, $period);
 		}
 
+		if ($owner = $record->getOwner()) {
+			$owner = $this->entityManager->find($owner::class, $owner->getId());
+			$record->setOwner($owner);
+		}
+
 		try {
 			$this->entityManager->persist($record);
 			$this->entityManager->flush();
