@@ -9,19 +9,30 @@ namespace JuniWalk\Tests\Files;
 
 use Doctrine\ORM\Mapping as ORM;
 use Nette\Security\IIdentity;
-use Ramsey\Uuid\Doctrine\UuidV7Generator;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity, ORM\Table(name: 'identity')]
 class TestIdentityUuid implements IIdentity
 {
-	#[ORM\Id, ORM\GeneratedValue(strategy: 'CUSTOM'), ORM\CustomIdGenerator(class: UuidV7Generator::class)]
-	#[ORM\Column(type: 'uuid')]
+	#[ORM\Id, ORM\Column(type: 'uuid')]
 	private UuidInterface $id;
 
-	public function getId(): UuidInterface
+	public function __construct()
 	{
-		return $this->id;
+		$this->id = Uuid::uuid7();
+	}
+
+
+	public function __clone(): void
+	{
+		unset($this->id);
+	}
+
+
+	public function getId(): string
+	{
+		return $this->id->toString();
 	}
 
 	public function getRoles(): array

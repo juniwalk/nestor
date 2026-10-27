@@ -15,6 +15,7 @@ use JuniWalk\Nestor\Exceptions\PeriodNotValidException;
 use JuniWalk\Nestor\Exceptions\RecordExistsException;
 use JuniWalk\Nestor\Exceptions\RecordFailedException;
 use JuniWalk\Nestor\Exceptions\RecordNotValidException;
+use ReflectionClass;
 use stdClass;
 use Tester\Assert;
 use Tester\TestCase;
@@ -42,7 +43,7 @@ abstract class AbstractChroniclerCase extends TestCase
 	public function testInvalidEntityName(): void
 	{
 		Assert::exception(
-			fn() => new Chronicler(stdClass::class, $this->db->entityManager),
+			fn() => (new ReflectionClass(Chronicler::class))->newInstance(stdClass::class, $this->db->entityManager),
 			RecordNotValidException::class,
 		);
 	}
@@ -153,7 +154,7 @@ abstract class AbstractChroniclerCase extends TestCase
 		$this->db->chronicler->record($record);
 
 		$records = $this->db->fetchRecords();
-		Assert::equal($identity->getId(), $records[0]->getOwner()->getId());
+		Assert::same($identity->getId(), $records[0]->getOwner()?->getId());
 	}
 
 

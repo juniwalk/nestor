@@ -8,18 +8,15 @@
 namespace JuniWalk\Tests\Files;
 
 use Doctrine\ORM\Mapping as ORM;
+use JuniWalk\ORM\Entity\Interfaces\Identified;
+use JuniWalk\ORM\Entity\Traits\IdentifierIdentity;
 use Nette\Security\IIdentity;
 
 #[ORM\Entity, ORM\Table(name: 'identity')]
-class TestIdentity implements IIdentity
+class TestIdentity implements IIdentity, Identified
 {
-	#[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
-	private int $id;
+	use IdentifierIdentity;
 
-	public function getId(): int
-	{
-		return $this->id;
-	}
 
 	public function getRoles(): array
 	{
