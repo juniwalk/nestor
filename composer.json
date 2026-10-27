@@ -7,10 +7,6 @@
 		"email": "juniwalk@outlook.cz"
 	}],
 
-	"autoload": {
-		"psr-4": {"JuniWalk\\Nestor\\": "src/"}
-	},
-
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"config": {
@@ -18,6 +14,10 @@
 		"allow-plugins": {
 			"phpstan/extension-installer": true
 		}
+	},
+
+	"autoload": {
+		"psr-4": {"JuniWalk\\Nestor\\": "src/"}
 	},
 
 	"require": {
@@ -36,6 +36,11 @@
 		"phpstan/phpstan-nette": "^2.0",
 		"staabm/phpstan-todo-by": "^0.2",
 		"tracy/tracy": "^2.10"
+	},
+
+	"scripts": {
+		"lint": "phpstan analyze",
+		"test": "tester tests/ -C"
 	},
 
 	"suggest": {
