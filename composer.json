@@ -27,6 +27,10 @@
 		"juniwalk/utils": "^4.0"
 	},
 
+	"autoload-dev": {
+		"psr-4": {"JuniWalk\\Tests\\": "tests/"}
+	},
+
 	"require-dev": {
 		"nette/application": "^3.2",
 		"nette/security": "^3.2",
