@@ -23,14 +23,12 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Link;
 use Nette\Localization\Translator;
 use Nette\Security\IIdentity as Identity;
-use Ramsey\Uuid\Uuid as UuidFactory;
 use Stringable;
 use Throwable;
 
 #[ORM\MappedSuperclass]
 abstract class Record implements Identified, Stringable
 {
-	use Tools\IdentifierUUID;
 	/** @use Tools\Ownerable<Identity> */
 	use Tools\Ownerable;
 	use Tools\ParamsSimplified;
@@ -64,13 +62,11 @@ abstract class Record implements Identified, Stringable
 	protected ?string $note = null;
 
 
-	final public function __construct(string $event, string $message)
+	public function __construct(string $event, string $message)
 	{
 		$this->date = new DateTime;
 		$this->message = $message;
 		$this->event = $event;
-
-		$this->id = UuidFactory::uuid7($this->date);
 	}
 
 
